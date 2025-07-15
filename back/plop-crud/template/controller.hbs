@@ -1,0 +1,33 @@
+import { Body, Controller, Get, Post, Query } from '@snow';
+import { {{bigCamelTableName}}Dao } from '../dao/{{bigCamelTableName}}Dao';
+
+@Controller('/{{tableName}}')
+export default class {{bigCamelTableName}}Controller {
+  private readonly {{tableName}}Dao = new {{bigCamelTableName}}Dao();
+
+  @Post('/add{{bigCamelTableName}}')
+  async add{{bigCamelTableName}}(@Body() body) {
+    return await this.{{tableName}}Dao.insert(body);
+  }
+
+  @Post('/find{{bigCamelTableName}}ById')
+  async find{{bigCamelTableName}}(@Query('id') id) {
+    return await this.{{tableName}}Dao.selectOne(id);
+  }
+
+  @Post('/find{{bigCamelTableName}}List')
+  async find{{bigCamelTableName}}List(@Body() body) {
+    const { page, size, ...queryParams } = body;
+    return await this.{{tableName}}Dao.selectPage(queryParams, { page, size }, { dirc: 'desc', field: 'ctime' });
+  }
+
+  @Post('/edit{{bigCamelTableName}}')
+  async edit{{bigCamelTableName}}(@Body() body) {
+    return await this.{{tableName}}Dao.update(body.id, body);
+  }
+
+  @Post('/delete{{bigCamelTableName}}')
+  async delete{{bigCamelTableName}}(@Query('id') id) {
+    return await this.{{tableName}}Dao.deleteById(id);
+  }
+}

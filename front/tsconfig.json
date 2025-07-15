@@ -1,0 +1,26 @@
+{
+  "files": [],
+  "references": [
+    {
+      "path": "./tsconfig.app.json"
+    },
+    {
+      "path": "./tsconfig.node.json"
+    }
+  ],
+  "compilerOptions": {
+    //更全面地支持 Node.js 类型，npm install --save-dev @types/node
+    "types": [
+      "node",
+      "axios"
+    ],
+    // 基础路径（通常为项目根目录）
+    "baseUrl": ".",
+    "paths": {
+      // 配置 @ 对应 src 目录
+      "@/*": [
+        "src/*"
+      ]
+    }
+  }
+}
