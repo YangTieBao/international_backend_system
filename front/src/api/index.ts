@@ -1,4 +1,37 @@
-import axios from 'axios'; // 假设使用 axios 发请求
+import axios from 'axios';
+
+export const publicKeyApi = () => {
+    const PUBLIC_KEY_STORAGE = "__APP_PUBLIC_KEY__";
+
+    // 获取后端公钥（带缓存和格式清洗）
+    async function getPublicKey(): Promise<string> {
+        const cachedKey = sessionStorage.getItem(PUBLIC_KEY_STORAGE);
+        if (cachedKey) {
+            return cleanPublicKey(cachedKey);
+        }
+        try {
+            const response = await fetch('/commons/publicKey');
+            if (!response.ok) throw new Error('公钥获取失败');
+
+            const publicKey = await response.text();
+            const cleanedKey = cleanPublicKey(publicKey);
+            sessionStorage.setItem(PUBLIC_KEY_STORAGE, cleanedKey);
+            return cleanedKey;
+        } catch (error) {
+            throw new Error('无法获取加密公钥');
+        }
+    }
+
+    //清洗公钥格式（移除标记和空白）
+    const cleanPublicKey = (publicKey: string): string => {
+        return publicKey
+            .replace(/-----BEGIN PUBLIC KEY-----/g, '')
+            .replace(/-----END PUBLIC KEY-----/g, '')
+            .replace(/\s+/g, '');
+    }
+
+    return { getPublicKey }
+}
 
 // 从后端获取指定语言的翻译数据
 export const fetchLocaleData = async (lang: string) => {

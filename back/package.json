@@ -37,6 +37,7 @@
   "dependencies": {
     "@types/mosca": "^2.8.4",
     "body-parser": "^1.19.0",
+    "crypto-js": "^4.2.0",
     "events": "^3.3.0",
     "express": "^4.17.1",
     "moment": "^2.30.1",

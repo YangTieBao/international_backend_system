@@ -6,14 +6,16 @@ import type {
 } from 'axios';
 import axios, { AxiosHeaders } from 'axios';
 import Cookies from 'js-cookie';
-import { decrypt, encrypt } from '../crypto';
+import { encrypt_decrypt } from '../crypto';
+
+const { encrypt, decrypt } = encrypt_decrypt();
 
 // 扩展 AxiosRequestConfig 类型
 interface CustomAxiosRequestConfig extends InternalAxiosRequestConfig {
     encrypt?: boolean;
 }
 
-export interface ApiResponse<T = any> {
+interface ApiResponse<T = any> {
     code: number;
     data: T;
     message: string;
