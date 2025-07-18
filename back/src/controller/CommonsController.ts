@@ -1,9 +1,29 @@
-import { Controller } from '@snow';
+import { Body, Controller, Get, Post } from '@snow';
 import { encrypt_decrypt } from '@utils/crypto';
+import { errors } from '@utils/errors';
+import { responses } from '@utils/response';
 
-const { getPublicKey, handleGetEncryptedRequest, handlePostEncryptedRequest, prepareEncryptedResponse } = encrypt_decrypt();
+const { return_200 } = responses()
+const { routerError } = errors()
+const { getPublicKey, handleGetEncryptedRequest, handlePostEncryptedRequest, prepareEncryptedResponse } = encrypt_decrypt()
 
 @Controller('/commons')
 export default class CommonsController {
-    
+    @Get('/getPublicKey')
+    getPublicKey() {
+        try {
+            return_200({ publicKey: getPublicKey() })
+        } catch (err) {
+            routerError('/commons/getPublicKey', err)
+        }
+    }
+
+    @Post('/languages')
+    languages(@Body() body) {
+        try {
+
+        } catch (err) {
+            routerError('/commons/languages', err)
+        }
+    }
 }

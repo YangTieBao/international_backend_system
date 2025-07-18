@@ -1,10 +1,9 @@
 import CryptoJS from 'crypto-js';
-import { publicKeyApi } from '../../api/index';
+import { commonsRequests } from '../../api/index';
 
 export const publicKey = () => {
-    const { getPublicKey } = publicKeyApi();
+    const { getPublicKey } = commonsRequests();
     const KEY_STORAGE_NAME = "__APP_AES_KEY__";
-
     interface RsaOaepParams extends Algorithm {
         name: "RSA-OAEP";
         hash: string | Algorithm;

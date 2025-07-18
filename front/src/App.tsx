@@ -1,6 +1,8 @@
 import { useTranslation } from 'react-i18next';
+import { commonsRequests } from './api';
 import LanguageSwitcher from './components/LanguageSwitcher';
 import { useLocale } from './hook/useLocale';
+
 
 function App() {
   const { t } = useTranslation();
