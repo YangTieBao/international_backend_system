@@ -6,7 +6,7 @@ export const encrypt_decrypt = () => {
 
     // AES加密：明文 -> 密文
     const encrypt = async (
-        data?: object | string
+        data?: object | string | null
     ): Promise<{
         encryptedData?: string;
         encryptedKey: string;

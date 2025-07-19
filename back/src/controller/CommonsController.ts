@@ -5,14 +5,18 @@ import { responses } from '@utils/response';
 
 const { return_200 } = responses()
 const { routerError } = errors()
-const { getPublicKey, handleGetEncryptedRequest, handlePostEncryptedRequest, prepareEncryptedResponse } = encrypt_decrypt()
+const { getPublicKey, handleEncryptedRequest } = encrypt_decrypt()
 
 @Controller('/commons')
 export default class CommonsController {
     @Get('/getPublicKey')
     getPublicKey() {
         try {
-            return_200({ publicKey: getPublicKey() })
+            return {
+                status: 200,
+                msg: '请求成功',
+                data: { publicKey: getPublicKey() }
+            }
         } catch (err) {
             routerError('/commons/getPublicKey', err)
         }
@@ -21,7 +25,9 @@ export default class CommonsController {
     @Post('/languages')
     languages(@Body() body) {
         try {
-
+            const { symmetricKey, jsonDecryptedData } = handleEncryptedRequest(body)
+            const data = {}
+            return return_200(data, symmetricKey, body.iv)
         } catch (err) {
             routerError('/commons/languages', err)
         }

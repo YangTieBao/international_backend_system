@@ -1,7 +1,15 @@
+import { encrypt_decrypt } from "./crypto"
 export const responses = () => {
+    const { prepareEncryptedResponse } = encrypt_decrypt()
     // 成功响应（200）
-    const return_200 = (data: Object = {}) => {
-        return { status: 200, msg: '请求成功', data }
+    const return_200 = (data: Object = {}, symmetricKey: string = null,
+        requestIv: string = null) => {
+        return {
+            status: 200,
+            msg: '请求成功',
+            data: prepareEncryptedResponse(data, symmetricKey, requestIv)
+        }
+
     }
 
     // 无内容（204，常用于删除成功）

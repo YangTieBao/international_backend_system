@@ -12,7 +12,7 @@ const { encrypt, decrypt } = encrypt_decrypt();
 
 // 扩展 AxiosRequestConfig 类型
 interface CustomAxiosRequestConfig extends InternalAxiosRequestConfig {
-    encrypt?: boolean;
+
 }
 
 interface ApiResponse<T = any> {
@@ -34,104 +34,55 @@ service.interceptors.request.use(
         if (!config.headers) {
             config.headers = new AxiosHeaders();
         }
-        // 添加 token
+
         const token = Cookies.get('token');
         if (token) {
             config.headers.set('Authorization', `Bearer ${token}`);
         }
-        // 加密请求数据 - 支持GET无参数、GET有参数和POST/PUT等请求
-        const shouldEncrypt = config.encrypt;
-        const isGetRequest = config.method?.toUpperCase() == 'GET';
-        const hasData = config.data && Object.keys(config.data).length > 0;
-        const hasParams = config.params && Object.keys(config.params).length > 0;
 
-        if (shouldEncrypt) {
-            try {
-                let encryptedResult;
+        const requestData = config.data || config.params || null
 
-                // 处理GET请求
-                if (isGetRequest) {
-                    // GET请求有参数，加密参数
-                    if (hasParams) {
-                        encryptedResult = await encrypt(config.params);
-                    }
-                    // GET请求无参数，只生成加密参数
-                    else {
-                        encryptedResult = await encrypt();
-                    }
-
-                    // 将加密结果放入URL参数
-                    config.params = {
-                        encryptedData: encryptedResult.encryptedData || 0,
-                        encryptedKey: encryptedResult.encryptedKey,
-                        iv: encryptedResult.iv,
-                        hashAlgorithm: encryptedResult.hashAlgorithm
-                    };
-                }
-                // 处理其他请求方法
-                else {
-                    // 其他请求有数据，加密数据
-                    if (hasData) {
-                        encryptedResult = await encrypt(config.data);
-                    }
-                    // 其他请求无数据，只生成加密参数
-                    else {
-                        encryptedResult = await encrypt();
-                    }
-
-                    // 将加密结果放入请求体
-                    config.data = {
-                        encryptedData: encryptedResult.encryptedData || 0,
-                        encryptedKey: encryptedResult.encryptedKey,
-                        iv: encryptedResult.iv,
-                        hashAlgorithm: encryptedResult.hashAlgorithm
-                    };
-                }
-
-                // 设置加密标识
-                config.headers.set('X-Request-Encrypted', 'true');
-            } catch (error) {
-                console.error('Encryption error:', error);
-                return Promise.reject(new Error('数据加密失败'));
+        try {
+            let encryptedResult = await encrypt(requestData);
+            if (config.data) {
+                config.data = {
+                    encryptedData: encryptedResult.encryptedData || 0,
+                    encryptedKey: encryptedResult.encryptedKey,
+                    iv: encryptedResult.iv,
+                    hashAlgorithm: encryptedResult.hashAlgorithm
+                };
+            } else {
+                config.params = {
+                    encryptedData: encryptedResult.encryptedData || 0,
+                    encryptedKey: encryptedResult.encryptedKey,
+                    iv: encryptedResult.iv,
+                    hashAlgorithm: encryptedResult.hashAlgorithm
+                };
             }
+        } catch (error) {
+            return Promise.reject(new Error('数据加密失败'));
         }
-
         return config;
     },
     (error: AxiosError) => {
-        console.error('Request error:', error);
         return Promise.reject(error);
     }
 );
 
 service.interceptors.response.use(
     (response: AxiosResponse<ApiResponse>) => {
-        const isEncrypted = response.headers['x-response-encrypted'] == 'true';
-        if (isEncrypted && response.data?.data) {
+        if (response.data?.data?.data) {
             try {
-                if (
-                    typeof response.data.data == 'object' &&
-                    'encryptedData' in response.data.data
-                ) {
-                    const encryptedResponse = response.data.data as {
-                        encryptedData: string;
-                        iv: string
-                    };
-
-                    const decryptedData = decrypt(
-                        encryptedResponse.encryptedData
-                    );
-
-                    try {
-                        response.data.data = JSON.parse(decryptedData);
-                    } catch {
-                        response.data.data = decryptedData;
-                    }
-                } else {
-                    throw new Error('无效的加密响应格式');
+                const encryptedResponse = response.data.data.data
+                const decryptedData = decrypt(
+                    encryptedResponse
+                );
+                try {
+                    response.data.data.data = JSON.parse(decryptedData);
+                } catch {
+                    response.data.data.data = decryptedData;
                 }
             } catch (error) {
-                console.error('Decrypt error:', error);
                 return Promise.reject({
                     code: 500,
                     message: '数据解析失败',
@@ -140,10 +91,9 @@ service.interceptors.response.use(
             }
         }
 
-        return response;
+        return response.data.data;
     },
     (error: AxiosError) => {
-        console.error('Response error:', error);
 
         // 创建错误响应对象
         const errorResponse: ApiResponse = {
