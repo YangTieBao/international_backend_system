@@ -22,7 +22,6 @@ export const publicKey = () => {
             const response = await fetch(import.meta.env.VITE_API_URL + '/commons/getPublicKey');
             const publicKey = await response.text();
             const publicKeyJson = JSON.parse(publicKey)
-            console.log(publicKeyJson.data.data.publicKey)
             const cleanedKey = cleanPublicKey(publicKeyJson.data.data.publicKey);
             sessionStorage.setItem(PUBLIC_KEY_STORAGE, cleanedKey);
             return cleanedKey;
@@ -94,7 +93,7 @@ export const publicKey = () => {
         return window.btoa(binary);
     }
 
-    //生成并存储随机密钥
+    //生成随机密钥
     const generateAndStoreKey = async (): Promise<void> => {
         let retryCount = 0;
         const maxRetries = 3;
@@ -106,10 +105,6 @@ export const publicKey = () => {
                 // 生成128位随机IV (16字节)
                 const iv = CryptoJS.lib.WordArray.random(16);
 
-                const keyHex = key.toString(CryptoJS.enc.Hex); // 256位密钥 → 64个字符的Hex字符串
-                const ivHex = iv.toString(CryptoJS.enc.Hex);   // 128位IV → 32个字符的Hex字符串
-
-                console.log('76756452352',keyHex)
                 // 存储原始密钥材料（使用Hex格式）
                 sessionStorage.setItem(KEY_STORAGE_NAME, JSON.stringify({
                     key: key.toString(CryptoJS.enc.Hex),

@@ -3,7 +3,7 @@ import { encrypt_decrypt } from '@utils/crypto';
 import { errors } from '@utils/errors';
 import { responses } from '@utils/response';
 
-const { return_200 } = responses()
+const { return_200, return_500 } = responses()
 const { routerError } = errors()
 const { getPublicKey, handleEncryptedRequest } = encrypt_decrypt()
 
@@ -13,7 +13,7 @@ export default class CommonsController {
     getPublicKey() {
         try {
             return {
-                status: 200,
+                code: 200,
                 msg: '请求成功',
                 data: { publicKey: getPublicKey() }
             }
@@ -26,8 +26,8 @@ export default class CommonsController {
     languages(@Body() body) {
         try {
             const { symmetricKey, jsonDecryptedData } = handleEncryptedRequest(body)
-            const data = {}
-            return return_200(data, symmetricKey, body.iv)
+            const data = { msg: 1111111 }
+            return return_200(data, symmetricKey, body)
         } catch (err) {
             routerError('/commons/languages', err)
         }

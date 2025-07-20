@@ -9,10 +9,13 @@
     }
   ],
   "compilerOptions": {
+    "jsx": "react-jsx",
     //更全面地支持 Node.js 类型，npm install --save-dev @types/node
     "types": [
       "node",
-      "axios"
+      "axios",
+      "react",
+      "react-dom"
     ],
     // 基础路径（通常为项目根目录）
     "baseUrl": ".",

@@ -9,16 +9,37 @@ import Cookies from 'js-cookie';
 import { encrypt_decrypt } from '../crypto';
 
 const { encrypt, decrypt } = encrypt_decrypt();
-
-// 扩展 AxiosRequestConfig 类型
-interface CustomAxiosRequestConfig extends InternalAxiosRequestConfig {
-
-}
-
 interface ApiResponse<T = any> {
     code: number;
     data: T;
     message: string;
+}
+
+// 防抖缓存接口
+interface DebounceCache {
+    [key: string]: {
+        timestamp: number;
+        controller: AbortController;
+    };
+}
+
+// 防抖缓存对象
+const debounceCache: DebounceCache = {};
+
+// 生成请求唯一标识
+function generateRequestKey(config: InternalAxiosRequestConfig): string {
+    const { method, url, params, data } = config;
+    return `${method}-${url}-${JSON.stringify(params)}-${JSON.stringify(data)}`;
+}
+
+// 清除过期的防抖缓存
+function clearExpiredDebounceCache(debounceTime: number = 1000) {
+    const now = Date.now();
+    Object.keys(debounceCache).forEach(key => {
+        if (now - debounceCache[key].timestamp > debounceTime) {
+            delete debounceCache[key];
+        }
+    });
 }
 
 const service: AxiosInstance = axios.create({
@@ -30,7 +51,7 @@ const service: AxiosInstance = axios.create({
 });
 
 service.interceptors.request.use(
-    async (config: CustomAxiosRequestConfig) => {
+    async (config) => {
         if (!config.headers) {
             config.headers = new AxiosHeaders();
         }
@@ -40,7 +61,35 @@ service.interceptors.request.use(
             config.headers.set('Authorization', `Bearer ${token}`);
         }
 
-        const requestData = config.data || config.params || null
+        // 检查是否启用了防抖
+        const useDebounce = config.useDebounce ?? true;
+        const debounceTime = config.debounceTime ?? 1000; // 默认1秒防抖时间
+
+        if (useDebounce) {
+            // 清除过期缓存
+            clearExpiredDebounceCache(debounceTime);
+
+            // 生成请求唯一标识
+            const requestKey = generateRequestKey(config);
+
+            // 检查是否有相同的请求在防抖时间内
+            if (debounceCache[requestKey]) {
+                // 取消之前的请求
+                debounceCache[requestKey].controller.abort('Request canceled due to debounce');
+                delete debounceCache[requestKey];
+            }
+
+            // 创建新的AbortController并保存
+            const controller = new AbortController();
+            config.signal = controller.signal;
+            debounceCache[requestKey] = {
+                timestamp: Date.now(),
+                controller
+            };
+        }
+
+        const isEncryptResponse = config.isEncryptResponse || null;
+        const requestData = config.data || config.params || null;
 
         try {
             let encryptedResult = await encrypt(requestData);
@@ -49,14 +98,16 @@ service.interceptors.request.use(
                     encryptedData: encryptedResult.encryptedData || 0,
                     encryptedKey: encryptedResult.encryptedKey,
                     iv: encryptedResult.iv,
-                    hashAlgorithm: encryptedResult.hashAlgorithm
+                    hashAlgorithm: encryptedResult.hashAlgorithm,
+                    isEncryptResponse
                 };
             } else {
                 config.params = {
                     encryptedData: encryptedResult.encryptedData || 0,
                     encryptedKey: encryptedResult.encryptedKey,
                     iv: encryptedResult.iv,
-                    hashAlgorithm: encryptedResult.hashAlgorithm
+                    hashAlgorithm: encryptedResult.hashAlgorithm,
+                    isEncryptResponse
                 };
             }
         } catch (error) {
@@ -71,6 +122,11 @@ service.interceptors.request.use(
 
 service.interceptors.response.use(
     (response: AxiosResponse<ApiResponse>) => {
+        const { config } = response
+        const isEncryptResponse = config.isEncryptResponse || null
+        if (!isEncryptResponse) {
+            return response.data.data;
+        }
         if (response.data?.data?.data) {
             try {
                 const encryptedResponse = response.data.data.data
@@ -94,6 +150,14 @@ service.interceptors.response.use(
         return response.data.data;
     },
     (error: AxiosError) => {
+        // 如果是防抖取消的请求，特殊处理
+        if (error.message === 'Request canceled due to debounce') {
+            return Promise.reject({
+                code: -1,
+                message: '请求被防抖取消',
+                data: null
+            });
+        }
 
         // 创建错误响应对象
         const errorResponse: ApiResponse = {
