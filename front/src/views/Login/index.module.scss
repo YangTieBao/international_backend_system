@@ -1,0 +1,35 @@
+#login {
+    width: 100%;
+    height: 100%;
+    background-image: url('../../assets/images/logo.jpg');
+    background-size: cover;
+    display: flex;
+    justify-content: end;
+    align-items: center;
+
+    .main {
+        width: 30%;
+        min-width: 360px;
+        background: #fff;
+        margin-right: 10rem;
+        padding: 2rem;
+        border-radius: 8px;
+        border: 1px solid #fff;
+
+        .header {
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #999;
+        }
+
+        .section {
+            margin-top: 2rem;
+            display: flex;
+            justify-content: start;
+            align-items: center;
+
+            #form {
+                width: 80%;
+            }
+        }
+    }
+}

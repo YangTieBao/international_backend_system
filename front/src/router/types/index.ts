@@ -1,7 +1,8 @@
 import * as React from "react";
 
 export interface RouteItem {
-    path: string;
+    index?: boolean;
+    path?: string;
     name?: string;
     element: React.ReactNode;
     children?: RouteItem[];
