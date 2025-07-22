@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "tsnd -r tsconfig-paths/register --respawn ./src/index.ts",
+    "dev": "tsnd -r tsconfig-paths/register --respawn ./src/index.ts",
     "build": "tsc && tsc-alias",
     "start:prod": "node ./dist/src/index.js",
     "mqtt-proxy": "node ./mqtt-proxy",

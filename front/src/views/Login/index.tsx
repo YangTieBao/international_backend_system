@@ -19,6 +19,7 @@ export default function index() {
     const onFinish: FormProps<loginType>['onFinish'] = (values) => {
         if (values.username === 'admin' && values.password === 'admin123456') {
             navigate('/index/dashboard')
+            sessionStorage.setItem('userInfo', JSON.stringify({ role: 'admin', token: '33333' }))
         }
     };
 
@@ -68,9 +69,6 @@ export default function index() {
                         </Form.Item>
                     </Form>
                 </section>
-                <footer>
-
-                </footer>
             </main>
         </div>
     )

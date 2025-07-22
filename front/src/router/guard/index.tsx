@@ -14,7 +14,9 @@ const AuthGuard = ({ route, children }: AuthGuardProps) => {
   useEffect(() => {
     // 检查是否需要认证
     if (route.meta?.isAuth) {
-      const isAuthenticated = !!sessionStorage.getItem("token");
+      const userInfoStr = sessionStorage.getItem('userInfo');
+      const userInfo = userInfoStr ? JSON.parse(userInfoStr) : null;
+      const isAuthenticated = userInfo.token ? true : false
 
       if (!isAuthenticated) {
         navigate("/login", {

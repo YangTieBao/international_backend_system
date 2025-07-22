@@ -1,12 +1,12 @@
 import { lazy } from "react";
 import { Navigate } from 'react-router-dom';
+import Login from '../../views/Login';
 import AuthGuard from "../guard";
 import * as RouterTypes from "../types";
 
-const Login = lazy(() => import("../../views/Login"));
 const Dashboard = lazy(() => import("../../views/Dashboard"));
 const NotFound = lazy(() => import("../../views/NotFound"));
-const Index = lazy(() => import("../index"))
+const Index = lazy(() => import("../../views"))
 
 const routes: RouterTypes.RouteItem[] = [
     {
@@ -21,7 +21,11 @@ const routes: RouterTypes.RouteItem[] = [
         element: <Index />,
         children: [
             {
-                path: "/index/dashboard",
+                index: true,
+                element: <Navigate to='dashboard' replace />
+            },
+            {
+                path: "dashboard",
                 name: 'dashboard',
                 element: (
                     <AuthGuard route={{ path: "/index/dashboard", element: <Dashboard /> }}>
@@ -31,15 +35,11 @@ const routes: RouterTypes.RouteItem[] = [
                 meta: {
                     title: "工作台"
                 }
-            },
-            {
-                path: '/index',
-                element: <Navigate to='/index/dashboard' replace />
             }
         ]
     },
     {
-        path: '/',
+        index: true,
         element: <Navigate to='/login' replace />
     },
     {
