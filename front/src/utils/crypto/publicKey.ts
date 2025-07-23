@@ -19,7 +19,7 @@ export const publicKey = () => {
             return cleanPublicKey(cachedKey);
         }
         try {
-            const response = await fetch(import.meta.env.VITE_API_URL + '/commons/getPublicKey');
+            const response = await fetch(import.meta.env.VITE_API_URL + '/base-api/commons/getPublicKey');
             const publicKey = await response.text();
             const publicKeyJson = JSON.parse(publicKey)
             const cleanedKey = cleanPublicKey(publicKeyJson.data.data.publicKey);

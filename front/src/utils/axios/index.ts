@@ -43,7 +43,7 @@ function clearExpiredDebounceCache(debounceTime: number = 1000) {
 }
 
 const service: AxiosInstance = axios.create({
-    baseURL: import.meta.env.VITE_API_URL,
+    baseURL: import.meta.env.VITE_API_URL + '/base-api',
     timeout: 10000,
     headers: {
         'Content-Type': 'application/json',

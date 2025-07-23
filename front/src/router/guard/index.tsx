@@ -26,10 +26,6 @@ const AuthGuard = ({ route, children }: AuthGuardProps) => {
       }
     }
 
-    // 设置页面标题
-    if (route.meta?.title) {
-      document.title = `${route.meta.title} | My App`;
-    }
   }, [route, navigate, location]);
 
   return <>{children}</>;

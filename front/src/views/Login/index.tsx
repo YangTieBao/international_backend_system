@@ -1,8 +1,11 @@
 import type { FormProps } from 'antd';
 import { Button, Checkbox, Form, Input } from 'antd';
 import { useNavigate } from 'react-router-dom';
+import { usersRequests } from '../../api/users';
 import loginStyle from './index.module.scss';
 export default function index() {
+    const { login } = usersRequests()
+
     interface loginType {
         username?: string;
         password?: string;
@@ -17,10 +20,8 @@ export default function index() {
     }
 
     const onFinish: FormProps<loginType>['onFinish'] = (values) => {
-        if (values.username === 'admin' && values.password === 'admin123456') {
-            navigate('/index/dashboard')
-            sessionStorage.setItem('userInfo', JSON.stringify({ role: 'admin', token: '33333' }))
-        }
+        const response = login(values)
+        console.log(response, values)
     };
 
     const onFinishFailed: FormProps<loginType>['onFinishFailed'] = (errorInfo) => {

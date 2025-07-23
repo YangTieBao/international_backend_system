@@ -1,6 +1,19 @@
 import crypto from 'crypto';
 import CryptoJS from 'crypto-js';
 
+// 生成 RSA 密钥对
+const { publicKey, privateKey } = crypto.generateKeyPairSync('rsa', {
+    modulusLength: 2048,
+    publicKeyEncoding: {
+        type: 'spki',
+        format: 'pem'
+    },
+    privateKeyEncoding: {
+        type: 'pkcs8',
+        format: 'pem'
+    }
+});
+
 export const encrypt_decrypt = () => {
     interface EncryptedRequest {
         encryptedData?: string;
@@ -8,19 +21,6 @@ export const encrypt_decrypt = () => {
         iv: string;
         hashAlgorithm: string;
     }
-
-    // 生成 RSA 密钥对
-    const { publicKey, privateKey } = crypto.generateKeyPairSync('rsa', {
-        modulusLength: 2048,
-        publicKeyEncoding: {
-            type: 'spki',
-            format: 'pem'
-        },
-        privateKeyEncoding: {
-            type: 'pkcs8',
-            format: 'pem'
-        }
-    });
 
     // 提供公钥
     const getPublicKey = (): string => publicKey;
@@ -34,6 +34,7 @@ export const encrypt_decrypt = () => {
     const decryptSymmetricKey = (encryptedKey: string, hashAlgorithm: string): string => {
         try {
             const encryptedArray = new Uint8Array(Buffer.from(encryptedKey, 'base64'));
+
             const decryptedBuffer = crypto.privateDecrypt(
                 {
                     key: privateKey,
@@ -45,6 +46,7 @@ export const encrypt_decrypt = () => {
             const utf8String = Buffer.from(decryptedBuffer.toString('hex'), 'hex').toString('utf-8');
             return utf8String;
         } catch (error) {
+            console.log(error)
             throw new Error('对称解密失败');
         }
     }
