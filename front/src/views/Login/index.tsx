@@ -19,8 +19,8 @@ export default function index() {
         password: [{ required: true, message: '请输入密码' }]
     }
 
-    const onFinish: FormProps<loginType>['onFinish'] = (values) => {
-        const response = login(values)
+    const onFinish: FormProps<loginType>['onFinish'] = async (values) => {
+        const response = await login(values)
         console.log(response, values)
     };
 

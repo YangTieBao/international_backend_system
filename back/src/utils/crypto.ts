@@ -1,6 +1,11 @@
 import crypto from 'crypto';
 import CryptoJS from 'crypto-js';
 
+//生成jwt密钥
+export const generateJWTSecret = () => {
+    return crypto.randomBytes(32).toString('hex');
+};
+
 // 生成 RSA 密钥对
 const { publicKey, privateKey } = crypto.generateKeyPairSync('rsa', {
     modulusLength: 2048,
