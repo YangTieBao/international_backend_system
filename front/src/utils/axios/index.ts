@@ -5,7 +5,6 @@ import type {
     InternalAxiosRequestConfig
 } from 'axios';
 import axios, { AxiosHeaders } from 'axios';
-import Cookies from 'js-cookie';
 import { encrypt_decrypt } from '../crypto';
 
 const { encrypt, decrypt } = encrypt_decrypt();
@@ -57,10 +56,10 @@ service.interceptors.request.use(
             config.headers = new AxiosHeaders();
         }
 
-        const token = Cookies.get('token');
-        if (token) {
-            config.headers.set('Authorization', `Bearer ${token}`);
-        }
+        // const token = Cookies.get('token');
+        // if (token) {
+        //     config.headers.set('Authorization', `Bearer ${token}`);
+        // }
 
         // 检查是否启用了防抖
         const useDebounce = config.useDebounce ?? true;
@@ -172,8 +171,7 @@ service.interceptors.response.use(
 
             switch (status) {
                 case 401:
-                    Cookies.remove('token');
-                    window.location.href = '/index';
+                    window.location.href = '/login';
                     errorResponse.message = '未授权，请重新登录';
                     break;
                 case 403:

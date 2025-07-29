@@ -6,7 +6,7 @@ import { UsersDao } from '../dao/UsersDao';
 
 const jwt = require('jsonwebtoken');
 const jwt_secret = generateJWTSecret();
-const cookie_jwt_validity_period = 2 * 60 * 1000;
+const cookie_jwt_validity_period = 2 * 60 * 60 * 1000;
 
 const { return_200, return_401 } = responses()
 const { routerError } = errors()
@@ -45,7 +45,9 @@ export default class UsersController {
       res.cookie('jwtToken', token, {
         maxAge: cookie_jwt_validity_period,
         httpOnly: true,
-        sameSite: 'Lax',
+        domain: '127.0.0.1',
+        sameSite: 'Lax', // https需为None
+        secure: false, // https需为true
         path: '/', // 全站有效
       });
 

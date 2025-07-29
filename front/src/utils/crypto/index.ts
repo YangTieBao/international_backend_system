@@ -1,6 +1,8 @@
 import CryptoJS from 'crypto-js';
 import { publicKey } from './publicKey';
 
+const ENCRYPT_LOGIN_KEY = import.meta.env.VITE_LOGIN_CRYPTO;
+
 export const encrypt_decrypt = () => {
     const { KEY_STORAGE_NAME, generateAndStoreKey, getEncryptedKeyMaterial, getKeyMaterial } = publicKey();
 
@@ -67,5 +69,16 @@ export const encrypt_decrypt = () => {
         }
     }
 
-    return { encrypt, decrypt }
+    // 加密登录密码函数
+    const loginEncrypt = (data: string): string => {
+        return CryptoJS.AES.encrypt(data, ENCRYPT_LOGIN_KEY).toString();
+    };
+
+    // 解密登录密码函数
+    const loginDecrypt = (encryptedData: string): string => {
+        const bytes = CryptoJS.AES.decrypt(encryptedData, ENCRYPT_LOGIN_KEY);
+        return bytes.toString(CryptoJS.enc.Utf8);
+    };
+
+    return { encrypt, decrypt, loginEncrypt, loginDecrypt }
 }

@@ -1,6 +1,7 @@
 #login {
     width: 100%;
     height: 100%;
+    padding-left: 12rem;
     background-image: url('../../assets/images/logo.jpg');
     background-size: cover;
     display: flex;
@@ -8,10 +9,10 @@
     align-items: center;
 
     .main {
-        width: 30%;
-        min-width: 360px;
+        width: 25%;
+        min-width: 19rem;
         background: #fff;
-        margin-right: 10rem;
+        margin-right: 12%;
         padding: 2rem;
         border-radius: 8px;
         border: 1px solid #fff;
@@ -28,7 +29,16 @@
             align-items: center;
 
             #form {
-                width: 80%;
+                flex: 1;
+
+                .checkbox {
+                    display: flex;
+                    justify-content: space-between;
+                }
+
+                button {
+                    width: 100%;
+                }
             }
         }
     }
