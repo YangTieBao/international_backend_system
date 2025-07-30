@@ -2,8 +2,8 @@ import type { FormProps } from 'antd';
 import { Button, Checkbox, Form, Input } from 'antd';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { usersRequests } from '../../api/users';
-import { encrypt_decrypt } from '../../utils/crypto';
+import { usersRequests } from '@/api/users';
+import { encrypt_decrypt } from '@/utils/crypto';
 import loginStyle from './index.module.scss';
 
 
@@ -12,9 +12,9 @@ export default function index() {
     const { login } = usersRequests()
     const navigate = useNavigate()
 
-    interface LoginType {
-        username?: string;
-        password?: string;
+    interface loginType {
+        username: string;
+        password: string;
         remember?: boolean;
         autoLogin?: boolean;
     }
@@ -34,7 +34,7 @@ export default function index() {
         }
     }, []); // 空依赖数组：仅在组件挂载时执行一次
 
-    const getStoredStates = (): Partial<LoginType> => {
+    const getStoredStates = (): Partial<loginType> => {
         const stored = localStorage.getItem('loginPreferences');
         let { remember, autoLogin, username, encryptPassword } = stored ? JSON.parse(stored) : {};
         if (stored) {

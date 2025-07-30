@@ -1,3 +1,4 @@
+import { encrypt_decrypt } from '@/utils/crypto';
 import type {
     AxiosError,
     AxiosInstance,
@@ -5,8 +6,9 @@ import type {
     InternalAxiosRequestConfig
 } from 'axios';
 import axios, { AxiosHeaders } from 'axios';
-import { encrypt_decrypt } from '../crypto';
+import { messageFunctions } from '../messages';
 
+const { showSuccess } = messageFunctions();
 const { encrypt, decrypt } = encrypt_decrypt();
 interface ApiResponse<T = any> {
     code: number;
@@ -25,10 +27,22 @@ interface DebounceCache {
 // 防抖缓存对象
 const debounceCache: DebounceCache = {};
 
+// 优化：排序对象键，避免顺序影响
+function sortObject(obj: any): any {
+  if (typeof obj !== 'object' || obj === null) return obj;
+  if (Array.isArray(obj)) return obj.map(sortObject);
+  return Object.keys(obj).sort().reduce((res, key) => {
+    res[key] = sortObject(obj[key]);
+    return res;
+  }, {} as any);
+}
+
 // 生成请求唯一标识
 function generateRequestKey(config: InternalAxiosRequestConfig): string {
-    const { method, url, params, data } = config;
-    return `${method}-${url}-${JSON.stringify(params)}-${JSON.stringify(data)}`;
+  const { method, url, params, data } = config;
+  const sortedParams = sortObject(params);
+  const sortedData = sortObject(data);
+  return `${method}-${url}-${JSON.stringify(sortedParams)}-${JSON.stringify(sortedData)}`;
 }
 
 // 清除过期的防抖缓存
@@ -124,6 +138,11 @@ service.interceptors.response.use(
     (response: AxiosResponse<ApiResponse>) => {
         const { config } = response
         const isEncryptResponse = config.isEncryptResponse || null
+
+        if (response.data?.data?.code === 200) {
+            showSuccess('登录成功')
+        }
+
         if (!isEncryptResponse) {
             return response.data.data;
         }

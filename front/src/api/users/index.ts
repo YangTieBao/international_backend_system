@@ -1,4 +1,4 @@
-import { http } from '../../utils';
+import { http } from '@/utils';
 
 export const usersRequests = () => {
     //是否返回的是加密结果

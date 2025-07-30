@@ -8,22 +8,22 @@
       "path": "./tsconfig.node.json"
     }
   ],
-  "compilerOptions": {
-    "jsx": "react-jsx",
-    //更全面地支持 Node.js 类型，npm install --save-dev @types/node
-    "types": [
-      "node",
-      "axios",
-      "react",
-      "react-dom"
-    ],
-    // 基础路径（通常为项目根目录）
-    "baseUrl": ".",
-    "paths": {
-      // 配置 @ 对应 src 目录
-      "@/*": [
-        "src/*"
-      ]
-    }
-  }
+  // "compilerOptions": {
+  //   "jsx": "react-jsx",
+  //   //更全面地支持 Node.js 类型，npm install --save-dev @types/node
+  //   "types": [
+  //     "node",
+  //     "axios",
+  //     "react",
+  //     "react-dom"
+  //   ],
+  //   // 基础路径（通常为项目根目录）
+  //   "baseUrl": ".",
+  //   "paths": {
+  //     // 配置 @src 对应 src 目录
+  //     "@src/*": [
+  //       "src/*"
+  //     ]
+  //   }
+  // },
 }
