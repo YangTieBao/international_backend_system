@@ -1,16 +1,19 @@
+import { usersRequests } from '@/api/users';
+import { messageFunctions } from '@/utils';
+import { encrypt_decrypt } from '@/utils/crypto';
 import type { FormProps } from 'antd';
 import { Button, Checkbox, Form, Input } from 'antd';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { usersRequests } from '@/api/users';
-import { encrypt_decrypt } from '@/utils/crypto';
 import loginStyle from './index.module.scss';
 
 
 export default function index() {
+    const { showSuccess } = messageFunctions()
     const { loginEncrypt, loginDecrypt } = encrypt_decrypt()
     const { login } = usersRequests()
     const navigate = useNavigate()
+    const [form] = Form.useForm<loginType>();
 
     interface loginType {
         username: string;
@@ -20,19 +23,42 @@ export default function index() {
     }
 
     useEffect(() => {
-        const storedStates = getStoredStates() || {}
-        const shouldAutoLogin = storedStates.autoLogin
-            && storedStates.remember
-            && storedStates.username
-            && storedStates.password;
+        autoLogin()
+    }, [form]); // 空依赖数组：仅在组件挂载时执行一次,确保form挂载之后再执行
+
+    const autoLogin = async () => {
+        await new Promise(resolve => setTimeout(resolve, 100));
+        const allLoginValues = await form.validateFields();
+        const shouldAutoLogin = allLoginValues.autoLogin
+            && allLoginValues.remember
+            && allLoginValues.username
+            && allLoginValues.password;
 
         if (shouldAutoLogin) {
-            const response = login({
-                username: storedStates.username,
-                password: storedStates.password
+            login({
+                username: allLoginValues.username,
+                password: allLoginValues.password
+            }).then(() => {
+                showSuccess('登录成功')
+                setTimeout(() => {
+                    navigate('/dashboard')
+                }, 2000)
             })
         }
-    }, []); // 空依赖数组：仅在组件挂载时执行一次
+    }
+
+    const updateLoginValues = async () => {
+        const allLoginValues = await form.validateFields();
+        let { remember, autoLogin, username, password } = allLoginValues;
+        remember = autoLogin ? true : remember
+        const toStore = {
+            remember,
+            autoLogin,
+            username,
+            ...(remember && { encryptPassword: loginEncrypt(password) })
+        };
+        localStorage.setItem('loginPreferences', JSON.stringify(toStore));
+    };
 
     const getStoredStates = (): Partial<loginType> => {
         const stored = localStorage.getItem('loginPreferences');
@@ -59,7 +85,12 @@ export default function index() {
         };
         localStorage.setItem('loginPreferences', JSON.stringify(toStore));
         const response = await login(values)
-        console.log(response, values)
+        if (response) {
+            showSuccess('登录成功')
+            setTimeout(() => {
+                navigate('/dashboard')
+            }, 2000)
+        }
     };
 
     const onFinishFailed: FormProps<loginType>['onFinishFailed'] = (errorInfo) => {
@@ -74,12 +105,18 @@ export default function index() {
                 <section className={loginStyle.section}>
                     <Form
                         name={loginStyle.form}
+                        form={form}
                         labelCol={{ span: 0 }}
                         wrapperCol={{ span: 24 }}
                         initialValues={getStoredStates()}
                         onFinish={onFinish}
                         onFinishFailed={onFinishFailed}
                         autoComplete="off"
+                        onValuesChange={(changedValues) => {
+                            if ('autoLogin' in changedValues || 'remember' in changedValues) {
+                                updateLoginValues();
+                            }
+                        }}
                     >
                         <Form.Item<loginType>
                             name="username"
