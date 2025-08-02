@@ -3,7 +3,7 @@ import { messageFunctions } from '@/utils';
 import { encrypt_decrypt } from '@/utils/crypto';
 import type { FormProps } from 'antd';
 import { Button, Checkbox, Form, Input } from 'antd';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import loginStyle from './index.module.scss';
 
@@ -13,6 +13,7 @@ export default function index() {
     const { loginEncrypt, loginDecrypt } = encrypt_decrypt()
     const { login } = usersRequests()
     const navigate = useNavigate()
+    const [loading, setLoading] = useState(false);
     const [form] = Form.useForm<loginType>();
 
     interface loginType {
@@ -24,7 +25,7 @@ export default function index() {
 
     useEffect(() => {
         autoLogin()
-    }, [form]); // 空依赖数组：仅在组件挂载时执行一次,确保form挂载之后再执行
+    }, []); // 空依赖数组：仅在组件挂载时执行一次
 
     const autoLogin = async () => {
         await new Promise(resolve => setTimeout(resolve, 100));
@@ -35,12 +36,13 @@ export default function index() {
             && allLoginValues.password;
 
         if (shouldAutoLogin) {
+            setLoading(true)
             login({
                 username: allLoginValues.username,
                 password: allLoginValues.password
             }).then(() => {
-                showSuccess('登录成功')
                 setTimeout(() => {
+                    showSuccess('登录成功')
                     navigate('/dashboard')
                 }, 2000)
             })
@@ -75,6 +77,7 @@ export default function index() {
     }
 
     const onFinish: FormProps<loginType>['onFinish'] = async (values) => {
+        setLoading(true)
         let { remember, autoLogin, username, password } = values;
         remember = autoLogin ? true : remember
         const toStore = {
@@ -86,16 +89,13 @@ export default function index() {
         localStorage.setItem('loginPreferences', JSON.stringify(toStore));
         const response = await login(values)
         if (response) {
-            showSuccess('登录成功')
             setTimeout(() => {
+                showSuccess('登录成功')
                 navigate('/dashboard')
             }, 2000)
         }
     };
 
-    const onFinishFailed: FormProps<loginType>['onFinishFailed'] = (errorInfo) => {
-        console.log('Failed:', errorInfo);
-    };
     return (
         <div id={loginStyle.login}>
             <main className={loginStyle.main}>
@@ -110,7 +110,6 @@ export default function index() {
                         wrapperCol={{ span: 24 }}
                         initialValues={getStoredStates()}
                         onFinish={onFinish}
-                        onFinishFailed={onFinishFailed}
                         autoComplete="off"
                         onValuesChange={(changedValues) => {
                             if ('autoLogin' in changedValues || 'remember' in changedValues) {
@@ -142,7 +141,7 @@ export default function index() {
                         </div>
 
                         <Form.Item label={null}>
-                            <Button type="primary" htmlType="submit">
+                            <Button type="primary" htmlType="submit" loading={loading}>
                                 登录
                             </Button>
                         </Form.Item>
