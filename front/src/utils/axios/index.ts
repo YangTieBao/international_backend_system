@@ -90,7 +90,7 @@ service.interceptors.request.use(
             // 检查是否有相同的请求在防抖时间内
             if (debounceCache[requestKey]) {
                 // 取消之前的请求
-                debounceCache[requestKey].controller.abort('Request canceled due to debounce');
+                debounceCache[requestKey].controller.abort('cancel');
                 delete debounceCache[requestKey];
             }
 
@@ -143,10 +143,10 @@ service.interceptors.response.use(
         if ((response.data?.data?.code !== 200) && (response.data?.data?.code !== 204)) {
             if (response.data?.data?.code === 401) {
                 setTimeout(() => {
-                    showError(response.data?.data?.msg)
+                    showError(response.data?.data?.message)
                 }, 2000)
             } else {
-                showError(response.data?.data?.msg)
+                showError(response.data?.data?.message)
             }
         }
 
@@ -177,7 +177,7 @@ service.interceptors.response.use(
     },
     (error: AxiosError) => {
         // 如果是防抖取消的请求，特殊处理
-        if (error.message === 'Request canceled due to debounce') {
+        if (error.message === 'cancel') {
             return Promise.reject({
                 code: -1,
                 message: '请求被防抖取消',
@@ -185,45 +185,8 @@ service.interceptors.response.use(
             });
         }
 
-        // 创建错误响应对象
-        const errorResponse: ApiResponse = {
-            code: error.response?.status || 500,
-            message: error.message,
-            data: null
-        };
-
-        if (error.response) {
-            const status = error.response.status;
-
-            switch (status) {
-                case 401:
-                    window.location.href = '/login';
-                    errorResponse.message = '未授权，请重新登录';
-                    break;
-                case 403:
-                    errorResponse.message = '权限不足';
-                    break;
-                case 500:
-                    errorResponse.message = '服务器错误';
-                    break;
-                default:
-                    errorResponse.message = `请求错误: ${status}`;
-            }
-
-            // 如果后端返回了自定义错误消息
-            if (error.response.data && typeof error.response.data == 'object') {
-                const serverError = error.response.data as any;
-                if (serverError.message) {
-                    errorResponse.message = serverError.message;
-                }
-            }
-        } else if (error.request) {
-            errorResponse.message = '网络错误，请检查网络连接';
-        } else {
-            errorResponse.message = '请求配置错误';
-        }
-
-        return Promise.reject(errorResponse);
+        showError('网络请求失败，请稍后重试');
+        return Promise.reject(error);
     }
 );
 
