@@ -141,11 +141,13 @@ service.interceptors.response.use(
         const isEncryptResponse = config.isEncryptResponse || null
 
         if ((response.data?.data?.code !== 200) && (response.data?.data?.code !== 204)) {
-            showError(response.data?.data?.message)
             if (response.data?.data?.code === 401) {
-                window.location.href = '/login';
+                setTimeout(() => {
+                    showError(response.data?.data?.msg)
+                }, 2000)
+            } else {
+                showError(response.data?.data?.msg)
             }
-            return;
         }
 
         if (!isEncryptResponse) {

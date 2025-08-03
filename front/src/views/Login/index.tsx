@@ -1,9 +1,11 @@
 import { usersRequests } from '@/api/users';
+import { loginSuccess } from '@/store';
 import { messageFunctions } from '@/utils';
 import { encrypt_decrypt } from '@/utils/crypto';
 import type { FormProps } from 'antd';
 import { Button, Checkbox, Form, Input } from 'antd';
 import { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import loginStyle from './index.module.scss';
 
@@ -15,6 +17,7 @@ export default function index() {
     const navigate = useNavigate()
     const [loading, setLoading] = useState(false);
     const [form] = Form.useForm<loginType>();
+    const dispatch = useDispatch();
 
     interface loginType {
         username: string;
@@ -40,11 +43,19 @@ export default function index() {
             login({
                 username: allLoginValues.username,
                 password: allLoginValues.password
-            }).then(() => {
-                setTimeout(() => {
-                    showSuccess('登录成功')
-                    navigate('/dashboard')
-                }, 2000)
+            }).then((res) => {
+                if (res.code === 200) {
+                    setTimeout(() => {
+                        setLoading(false)
+                        showSuccess('登录成功')
+                        dispatch(loginSuccess(res.data))
+                        navigate('/dashboard')
+                    }, 2000)
+                } else {
+                    setTimeout(() => {
+                        setLoading(() => false)
+                    }, 2000)
+                }
             })
         }
     }
@@ -77,7 +88,7 @@ export default function index() {
     }
 
     const onFinish: FormProps<loginType>['onFinish'] = async (values) => {
-        setLoading(true)
+        setLoading(() => true)
         let { remember, autoLogin, username, password } = values;
         remember = autoLogin ? true : remember
         const toStore = {
@@ -88,10 +99,16 @@ export default function index() {
         };
         localStorage.setItem('loginPreferences', JSON.stringify(toStore));
         const response = await login(values)
-        if (response) {
+        if (response.code === 200) {
             setTimeout(() => {
+                setLoading(() => false)
                 showSuccess('登录成功')
+                dispatch(loginSuccess(response.data))
                 navigate('/dashboard')
+            }, 2000)
+        } else {
+            setTimeout(() => {
+                setLoading(() => false)
             }, 2000)
         }
     };
@@ -111,10 +128,8 @@ export default function index() {
                         initialValues={getStoredStates()}
                         onFinish={onFinish}
                         autoComplete="off"
-                        onValuesChange={(changedValues) => {
-                            if ('autoLogin' in changedValues || 'remember' in changedValues) {
-                                updateLoginValues();
-                            }
+                        onValuesChange={() => {
+                            updateLoginValues();
                         }}
                     >
                         <Form.Item<loginType>

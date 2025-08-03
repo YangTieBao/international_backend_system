@@ -2,6 +2,7 @@ import { Body, Controller, Post, Query, Res } from '@snow';
 import { encrypt_decrypt, generateJWTSecret } from '@utils/crypto';
 import { errors } from '@utils/errors';
 import { responses } from '@utils/response';
+import { MenusDao } from '../dao/MenusDao';
 import { UsersDao } from '../dao/UsersDao';
 
 const jwt = require('jsonwebtoken');
@@ -15,29 +16,47 @@ const { handleEncryptedRequest } = encrypt_decrypt()
 @Controller('/users')
 export default class UsersController {
   private readonly usersDao = new UsersDao();
+  private readonly menusDao = new UsersDao();
 
   @Post('/login')
   async login(@Res() res, @Body() body) {
     try {
       const { symmetricKey, jsonDecryptedData } = handleEncryptedRequest(body)
       const { username, password } = jsonDecryptedData || {}
-      const sql = `select * from users where (loginAccount = ? or phone = ? ) and password = ?`
-      const results = await UsersDao.query(sql, [username, username, password])
+      const userSql = `
+        select 
+          t1.id as user_id,t1.name,t1.age,t1.sex,t1.loginAccount as username,t1.defaultLanguage,
+          t2.id as role_id,t2.type as role_type,t2.description as role_description
+        from 
+          users as t1
+        left join 
+          user_roles as t3 on t3.user_id = t1.id
+        left join 
+          roles as t2 on t2.id  = t3.role_id
+        where 
+          (t1.loginAccount = ? or t1.phone = ? ) and t1.password = ?
+      `
+      const [userInfo] = await UsersDao.query(userSql, [username, username, password])
 
-      if (results.length === 0) {
-        return return_401('用户名/手机号或密码错误')
+      if (!userInfo) {
+        return return_401('用户名/手机号码或密码错误')
       }
 
-      const userInfo = results[0]
-
-      const userJwt = {
-        id: results[0].id,
-        username: results[0].loginAccount,
-        phone: results[0].phone
-      };
+      const menuSql = `
+        select t1.*
+        from 
+          menus as t1
+        left join 
+          role_menus as t2 on t2.menu_id = t1.id
+        left join 
+          roles as t3 on t3.id  = t2.role_id
+        where 
+          t3.id = ?
+        `
+      const userMenus = await MenusDao.query(menuSql, [userInfo.user_id])
 
       const token = jwt.sign(
-        { ...userJwt },
+        { ...userInfo },
         jwt_secret,
         { expiresIn: cookie_jwt_validity_period }
       );
@@ -51,7 +70,7 @@ export default class UsersController {
         path: '/', // 全站有效
       });
 
-      return return_200(userInfo, symmetricKey, body)
+      return return_200({ userInfo, userMenus }, symmetricKey, body)
 
     } catch (err) {
       routerError('/users/login', err)
