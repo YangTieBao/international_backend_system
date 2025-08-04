@@ -12,7 +12,7 @@ export const responses = () => {
                 data: prepareEncryptedResponse(data, symmetricKey, iv)
             } : {
                 code: 200,
-                msmessage: '请求成功',
+                message: '请求成功',
                 data
             }
     }

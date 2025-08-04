@@ -1,3 +1,4 @@
+import type { RootState } from '@/store';
 import {
     ContainerOutlined,
     DesktopOutlined,
@@ -6,9 +7,13 @@ import {
 import type { MenuProps } from 'antd';
 import { Menu } from 'antd';
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
 import sideBar from './index.module.scss';
+
 export default function index() {
     const [collapsed, setCollapsed] = useState(false);
+    const menus = useSelector((state: RootState) => state.user.userMenus)
+    const sortMenus = [...menus].sort((a, b) => a.sort - b.sort)
 
     const toggleCollapsed = () => {
         setCollapsed(!collapsed);
@@ -16,23 +21,29 @@ export default function index() {
 
     type MenuItem = Required<MenuProps>['items'][number];
 
-    const items: MenuItem[] = [
-        { key: '1', icon: <PieChartOutlined />, label: 'Option 1' },
-        { key: '2', icon: <DesktopOutlined />, label: 'Option 2' },
-        { key: '3', icon: <ContainerOutlined />, label: 'Option 3' },
-        { key: '4', icon: <PieChartOutlined />, label: 'Option 4' },
-        { key: '5', icon: <DesktopOutlined />, label: 'Option 5' },
-        { key: '6', icon: <ContainerOutlined />, label: 'Option 6' },
-        { key: '7', icon: <PieChartOutlined />, label: 'Option 7' },
-        { key: '8', icon: <DesktopOutlined />, label: 'Option 8' },
-        { key: '9', icon: <ContainerOutlined />, label: 'Option 9' },
-        { key: '10', icon: <PieChartOutlined />, label: 'Option 10' },
-        { key: '11', icon: <DesktopOutlined />, label: 'Option 11' },
-        { key: '12', icon: <ContainerOutlined />, label: 'Option 12' },
-        { key: '13', icon: <PieChartOutlined />, label: 'Option 13' },
-        { key: '14', icon: <DesktopOutlined />, label: 'Option 14' },
-        { key: '15', icon: <ContainerOutlined />, label: 'Option 15' }
-    ];
+    const items: MenuItem[] = sortMenus.map(menu => {
+        const IconComponent = getIconComponent(menu.icon);
+
+        return {
+            key: menu.id,
+            icon: IconComponent ? <IconComponent /> : null,
+            label: menu.title,
+            onClick: () => {
+                console.log('432432', menu.title)
+            }
+        };
+    });
+
+    function getIconComponent(iconType: string) {
+        const iconMap = {
+            'PieChartOutlined': PieChartOutlined,
+            'DesktopOutlined': DesktopOutlined,
+            'ContainerOutlined': ContainerOutlined,
+        };
+        return iconMap[iconType as keyof typeof iconMap];
+    }
+
+
     return (
         <div id={sideBar.sideBar}>
             <div className={sideBar.topIcon}>
@@ -43,7 +54,6 @@ export default function index() {
             <Menu
                 className={sideBar.menu}
                 defaultSelectedKeys={['1']}
-                defaultOpenKeys={['sub1']}
                 mode="inline"
                 theme="dark"
                 inlineCollapsed={collapsed}
