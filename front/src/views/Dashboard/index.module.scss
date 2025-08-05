@@ -10,10 +10,16 @@
         .sideBar {
             width: 14%;
             min-width: 160px;
+            height: 100%;
         }
 
         .main {
             flex: 1;
+            height: 100%;
+
+            .topBar {
+                height: 6%;
+            }
         }
     }
 }

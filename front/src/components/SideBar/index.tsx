@@ -6,20 +6,31 @@ import {
 } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import { Menu } from 'antd';
-import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import sideBar from './index.module.scss';
 
 export default function index() {
-    const [collapsed, setCollapsed] = useState(false);
     const menus = useSelector((state: RootState) => state.user.userMenus)
+    const collapsed = useSelector((state: RootState) => state.common.collapsed)
     const sortMenus = [...menus].sort((a, b) => a.sort - b.sort)
 
-    const toggleCollapsed = () => {
-        setCollapsed(!collapsed);
-    };
-
     type MenuItem = Required<MenuProps>['items'][number];
+
+    const menuClass = () => {
+        let className = [sideBar.menu]
+        if (collapsed) {
+            className.push(sideBar.isToSmall)
+        }
+        return className.join(' ')
+    }
+
+    const iconClass = () => {
+        let className = [sideBar.topIcon]
+        if (collapsed) {
+            className.push(sideBar.isToSmall)
+        }
+        return className.join(' ')
+    }
 
     const items: MenuItem[] = sortMenus.map(menu => {
         const IconComponent = getIconComponent(menu.icon);
@@ -29,7 +40,7 @@ export default function index() {
             icon: IconComponent ? <IconComponent /> : null,
             label: menu.title,
             onClick: () => {
-                console.log('432432', menu.title)
+
             }
         };
     });
@@ -46,13 +57,10 @@ export default function index() {
 
     return (
         <div id={sideBar.sideBar}>
-            <div className={sideBar.topIcon}>
+            <div className={iconClass()}>
             </div>
-            {/* <Button type="primary" onClick={toggleCollapsed} style={{ marginBottom: 16 }}>
-                {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-            </Button> */}
             <Menu
-                className={sideBar.menu}
+                className={menuClass()}
                 defaultSelectedKeys={['1']}
                 mode="inline"
                 theme="dark"
