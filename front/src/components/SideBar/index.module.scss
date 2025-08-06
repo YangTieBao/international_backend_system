@@ -1,25 +1,40 @@
 #sideBar {
     width: 100%;
     height: 100%;
+    background: rgb(0, 21, 41);
     display: flex;
     flex-direction: column;
 
     .topIcon {
-        height: 18%;
-        min-height: 100px;
+        height: 10%;
+        min-height: 60px;
         width: 100%;
-        background-image: url('@/assets/images/menu_top_icon.jpg');
-        background-size: cover;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        img {
+            width: 32px;
+            height: 32px;
+        }
+
+        span {
+            color: #fff;
+            font-size: 14px;
+        }
+    }
+
+    .drawer {
+        button {
+            border: none;
+            color: #000;
+        }
     }
 
     .menu {
         width: 100%;
         flex: 1;
         overflow-y: auto;
-    }
-
-    .isToSmall {
-        width: 40%;
     }
 
     // 滚动条
@@ -36,5 +51,11 @@
     .menu::-webkit-scrollbar-thumb {
         background: lightgray;
         border-radius: 2px;
+    }
+}
+
+.isToSmall {
+    span {
+        display: none;
     }
 }

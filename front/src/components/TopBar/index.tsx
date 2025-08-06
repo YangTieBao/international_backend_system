@@ -22,7 +22,7 @@ export default function index() {
 
     return (
         <div id={topBar.topBar}>
-            <Button type="link" onClick={toggleCollapsed} className={topBar.button}>
+            <Button onClick={toggleCollapsed} className={topBar.button}>
                 {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
             </Button>
         </div>

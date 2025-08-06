@@ -11,6 +11,7 @@
             width: 14%;
             min-width: 160px;
             height: 100%;
+            transition: all 0.3s linear;
         }
 
         .main {
@@ -21,5 +22,12 @@
                 height: 6%;
             }
         }
+    }
+}
+
+.isToSmall {
+    .sideBar {
+        width: 60px !important;
+        min-width: 0 !important;
     }
 }
