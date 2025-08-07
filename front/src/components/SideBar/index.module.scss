@@ -1,3 +1,5 @@
+@use '@/styles/sidebarMenu.scss' as menu;
+
 #sideBar {
     width: 100%;
     height: 100%;
@@ -5,29 +7,62 @@
     display: flex;
     flex-direction: column;
 
-    .topIcon {
-        height: 10%;
-        min-height: 60px;
+    .top {
         width: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        border-bottom: 1px solid #BEBEBE;
+        margin-bottom: 4px;
 
-        img {
-            width: 32px;
-            height: 32px;
+        .topIcon {
+            height: 10%;
+            min-height: 60px;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            img {
+                width: 32px;
+                height: 32px;
+            }
+
+            span {
+                color: #fff;
+                font-size: 14px;
+                white-space: nowrap;
+            }
         }
 
-        span {
-            color: #fff;
-            font-size: 14px;
+        .autoSearch {
+            height: 26px;
+            width: 100%;
+            padding: 0 8px;
+            margin-bottom: 4px;
+
+            :global(.ant-select-selector) {
+                border-color: rgb(0, 21, 41);
+                background-color: lightgrey;
+
+                input {
+                    color: #363636;
+                }
+            }
         }
     }
 
     .drawer {
+        margin-left: menu.$menuDefaultWith;
+
         button {
             border: none;
             color: #000;
+
+            span {
+                display: block;
+            }
+        }
+
+        button:hover {
+            color: #87CEEB;
         }
     }
 
@@ -35,6 +70,21 @@
         width: 100%;
         flex: 1;
         overflow-y: auto;
+
+        :global(.ant-menu-item) {
+            width: 100%;
+            height: 6%;
+            padding: 0;
+            margin: 0;
+            border-radius: 0;
+        }
+
+        :global(.ant-menu-item:hover) {
+            background: #708090;
+        }
+
+        :global(.ant-menu-item-selected) {}
+
     }
 
     // 滚动条
@@ -55,6 +105,14 @@
 }
 
 .isToSmall {
+    .autoSearch {
+        display: none;
+    }
+
+    .drawer {
+        margin-left: menu.$menuCollapsedWith !important;
+    }
+
     span {
         display: none;
     }

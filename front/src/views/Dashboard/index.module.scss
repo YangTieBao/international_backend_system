@@ -1,3 +1,5 @@
+@use '@/styles/sidebarMenu.scss' as menu;
+
 #dashbord {
     width: 100%;
     height: 100%;
@@ -8,8 +10,7 @@
         display: flex;
 
         .sideBar {
-            width: 14%;
-            min-width: 160px;
+            width: menu.$menuDefaultWith;
             height: 100%;
             transition: all 0.3s linear;
         }
@@ -27,7 +28,6 @@
 
 .isToSmall {
     .sideBar {
-        width: 60px !important;
-        min-width: 0 !important;
+        width: menu.$menuCollapsedWith !important;
     }
 }
