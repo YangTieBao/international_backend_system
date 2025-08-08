@@ -3,6 +3,7 @@ import TopBar from '@/components/TopBar';
 import type { RootState } from '@/store';
 import { Watermark } from 'antd';
 import { useSelector } from 'react-redux';
+import { Outlet } from 'react-router-dom';
 import dashbord from './index.module.scss';
 export default function index() {
     const collapsed = useSelector((state: RootState) => state.common.collapsed)
@@ -23,6 +24,10 @@ export default function index() {
                     <div className={dashbord.topBar}>
                         <TopBar />
                     </div>
+                    <section className={dashbord.section}>
+                        section
+                        <Outlet />
+                    </section>
                 </div>
             </Watermark>
         </div>

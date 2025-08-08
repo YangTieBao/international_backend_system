@@ -18,9 +18,18 @@
         .main {
             flex: 1;
             height: 100%;
+            display: flex;
+            flex-direction: column;
 
             .topBar {
+                width: 100%;
                 height: 6%;
+            }
+
+            .section {
+                width: 100%;
+                flex: 96%;
+                overflow-y: auto;
             }
         }
     }
