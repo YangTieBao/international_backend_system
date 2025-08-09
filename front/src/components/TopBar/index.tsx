@@ -69,12 +69,12 @@ export default function index() {
                 <ReloadOutlined />
                 <MessageOutlined />
                 <Dropdown menu={{ items }} placement="bottomLeft">
-                    <Button className={topBar.button}><TranslationOutlined /></Button>
+                    <TranslationOutlined />
                 </Dropdown>
                 <div className={topBar.user}>
                     <UserOutlined />
                     <span className={topBar.userName}>
-                        {userInfo ? userInfo.name : "管理员"}
+                        {userInfo.name}
                     </span>
                 </div>
             </div>

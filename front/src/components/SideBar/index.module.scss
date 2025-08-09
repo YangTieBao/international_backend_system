@@ -1,5 +1,3 @@
-@use '@/styles/sidebarMenu.scss' as menu;
-
 #sideBar {
     width: 100%;
     height: 100%;
@@ -50,7 +48,7 @@
     }
 
     .drawer {
-        margin-left: menu.$menuDefaultWith;
+        margin-left: $menuDefaultWith;
 
         button {
             border: none;
@@ -110,7 +108,7 @@
     }
 
     .drawer {
-        margin-left: menu.$menuCollapsedWith !important;
+        margin-left: $menuCollapsedWith !important;
     }
 
     span {

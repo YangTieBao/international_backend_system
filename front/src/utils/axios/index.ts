@@ -177,15 +177,16 @@ service.interceptors.response.use(
     },
     (error: AxiosError) => {
         // 如果是防抖取消的请求，特殊处理
-        if (error.message === 'cancel') {
+        if (error.message === 'canceled') {
             return Promise.reject({
                 code: -1,
                 message: '请求被防抖取消',
                 data: null
             });
+        } else {
+            showError('网络请求失败，请稍后重试');
         }
 
-        showError('网络请求失败，请稍后重试');
         return Promise.reject(error);
     }
 );

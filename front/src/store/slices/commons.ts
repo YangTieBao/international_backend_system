@@ -4,8 +4,9 @@ interface CommonState {
     collapsed: boolean;
 }
 
+
 const initialState: CommonState = {
-    collapsed: false
+    collapsed: false,
 };
 
 export const commonSlice = createSlice({

@@ -16,7 +16,7 @@ i18n
       useSuspense: false,
     },
     detection: {
-      order: ['localStorage', 'navigator'],
+      order: [],
       caches: []
     },
   });

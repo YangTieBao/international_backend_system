@@ -1,19 +1,25 @@
 import { usersRequests } from '@/api/users';
+import { useLanguage } from '@/hooks/useLanguage';
 import { loginSuccess } from '@/store';
 import { messageFunctions } from '@/utils';
 import { encrypt_decrypt } from '@/utils/crypto';
-import type { FormProps } from 'antd';
-import { Button, Checkbox, Form, Input } from 'antd';
+import {
+    GlobalOutlined
+} from '@ant-design/icons';
+import type { FormProps, MenuProps } from 'antd';
+import { Button, Checkbox, Dropdown, Form, Input } from 'antd';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import loginStyle from './index.module.scss';
 
-
 export default function index() {
+    const { t } = useTranslation()
     const { showSuccess } = messageFunctions()
     const { loginEncrypt, loginDecrypt } = encrypt_decrypt()
     const { login } = usersRequests()
+    const { currentLanguage, languageSelectItems, initLanguage, changeLanguage } = useLanguage()
     const navigate = useNavigate()
     const [loading, setLoading] = useState(false);
     const [form] = Form.useForm<loginType>();
@@ -26,8 +32,21 @@ export default function index() {
         autoLogin?: boolean;
     }
 
+    const items: MenuProps['items'] = languageSelectItems.map((lang: any) => ({
+        key: lang.id,
+        label: lang.native_name,
+        onClick: () => {
+            changeLanguage(lang.code, true)
+        }
+    }));
+
+    const currentLanguageItem = (languageSelectItems).find(
+        (lang: any) => lang.code == currentLanguage
+    );
+
     useEffect(() => {
         autoLogin()
+        initLanguage(true)
     }, []); // 空依赖数组：仅在组件挂载时执行一次
 
     const autoLogin = async () => {
@@ -115,54 +134,66 @@ export default function index() {
 
     return (
         <div id={loginStyle.login}>
-            <main className={loginStyle.main}>
-                <header className={loginStyle.header}>
-                    欢迎来到国际化后台管理系统！
-                </header>
-                <section className={loginStyle.section}>
-                    <Form
-                        name={loginStyle.form}
-                        form={form}
-                        labelCol={{ span: 0 }}
-                        wrapperCol={{ span: 24 }}
-                        initialValues={getStoredStates()}
-                        onFinish={onFinish}
-                        autoComplete="off"
-                        onValuesChange={() => {
-                            updateLoginValues();
-                        }}
-                    >
-                        <Form.Item<loginType>
-                            name="username"
-                            rules={rules.username}
+            <div className={loginStyle.top}>
+                <h4>国际化管理平台</h4>
+                <Dropdown menu={{ items }} placement="bottomLeft">
+                    <div className={loginStyle.language}>
+                        <GlobalOutlined />
+                        <span className={loginStyle.languageName}>{currentLanguageItem?.native_name}</span>
+                    </div>
+                </Dropdown>
+            </div>
+            <div className={loginStyle.middle}>
+                <main className={loginStyle.main}>
+                    <header className={loginStyle.header}>
+                        欢迎来到国际化后台管理系统！
+                    </header>
+                    <section className={loginStyle.section}>
+                        <Form
+                            name={loginStyle.form}
+                            form={form}
+                            labelCol={{ span: 0 }}
+                            wrapperCol={{ span: 24 }}
+                            initialValues={getStoredStates()}
+                            onFinish={onFinish}
+                            autoComplete="off"
+                            onValuesChange={() => {
+                                updateLoginValues();
+                            }}
                         >
-                            <Input placeholder="用户名" />
-                        </Form.Item>
-
-                        <Form.Item<loginType>
-                            name="password"
-                            rules={rules.password}
-                        >
-                            <Input.Password placeholder="密码" />
-                        </Form.Item>
-
-                        <div className={loginStyle.checkbox}>
-                            <Form.Item<loginType> name="remember" valuePropName="checked" label={null}>
-                                <Checkbox>记住密码</Checkbox>
+                            <Form.Item<loginType>
+                                name="username"
+                                rules={rules.username}
+                            >
+                                <Input placeholder={t('login.username')} />
                             </Form.Item>
-                            <Form.Item<loginType> name="autoLogin" valuePropName="checked" label={null}>
-                                <Checkbox>自动登录</Checkbox>
-                            </Form.Item>
-                        </div>
 
-                        <Form.Item label={null}>
-                            <Button type="primary" htmlType="submit" loading={loading}>
-                                登录
-                            </Button>
-                        </Form.Item>
-                    </Form>
-                </section>
-            </main>
+                            <Form.Item<loginType>
+                                name="password"
+                                rules={rules.password}
+                            >
+                                <Input.Password placeholder={t('login.password')} />
+                            </Form.Item>
+
+                            <div className={loginStyle.checkbox}>
+                                <Form.Item<loginType> name="remember" valuePropName="checked" label={null}>
+                                    <Checkbox>记住密码</Checkbox>
+                                </Form.Item>
+                                <Form.Item<loginType> name="autoLogin" valuePropName="checked" label={null}>
+                                    <Checkbox>自动登录</Checkbox>
+                                </Form.Item>
+                            </div>
+
+                            <Form.Item label={null}>
+                                <Button type="primary" htmlType="submit" loading={loading}>
+                                    登录
+                                </Button>
+                            </Form.Item>
+                        </Form>
+                    </section>
+                </main>
+            </div>
+            <div className={loginStyle.bottom}></div>
         </div>
     )
 }
