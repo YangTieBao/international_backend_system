@@ -68,7 +68,7 @@ export default function index() {
                         setLoading(false)
                         showSuccess('登录成功')
                         dispatch(loginSuccess(res.data))
-                        navigate('/dashboard')
+                        navigate('/dashboard', { replace: true })
                     }, 2000)
                 } else {
                     setTimeout(() => {
@@ -123,7 +123,7 @@ export default function index() {
                 setLoading(() => false)
                 showSuccess('登录成功')
                 dispatch(loginSuccess(response.data))
-                navigate('/dashboard')
+                navigate('/dashboard', { replace: true })
             }, 2000)
         } else {
             setTimeout(() => {

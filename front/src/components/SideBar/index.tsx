@@ -11,6 +11,7 @@ import { AutoComplete, Button, Drawer, Menu } from 'antd';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import sideBar from './index.module.scss';
+import { MenuList } from './menuList';
 
 export default function index() {
     const menus = useSelector((state: RootState) => state.user.userMenus)
@@ -18,6 +19,7 @@ export default function index() {
     const sortMenus = [...menus].sort((a, b) => a.sort - b.sort)
     const [open, setOpen] = useState(false);
     const [options, setOptions] = useState<AutoCompleteProps['options']>([]);
+    const [currentMenu, setCurrentMenu] = useState<any>({})
 
     type MenuItem = Required<MenuProps>['items'][number];
 
@@ -47,15 +49,19 @@ export default function index() {
     const items: MenuItem[] = sortMenus.map(menu => {
         const IconComponent = getIconComponent(menu.icon);
 
-        return {
-            key: menu.id,
-            icon: IconComponent ? <IconComponent /> : null,
-            label: menu.title,
-            onClick: () => {
-                showDrawer()
-            }
-        };
-    });
+        if (menu.parent_id == 0) {
+            return {
+                key: menu.id,
+                icon: IconComponent ? <IconComponent /> : null,
+                label: menu.title,
+                onClick: () => {
+                    setCurrentMenu(menu)
+                    showDrawer()
+                }
+            };
+        }
+        return null;
+    }).filter(Boolean);
 
     function getIconComponent(iconType: string) {
         const iconMap = {
@@ -92,13 +98,14 @@ export default function index() {
                 className={sideBar.menu}
                 defaultSelectedKeys={['1']}
                 mode="inline"
-                theme="dark"
+                theme="light"
                 inlineCollapsed={collapsed}
                 items={items}
             />
             <Drawer
                 className={sideBar.drawer}
-                title="Basic Drawer"
+                width={'50%'}
+                title={currentMenu.title}
                 placement="left"
                 mask={false}
                 closable={false}
@@ -109,7 +116,7 @@ export default function index() {
                     <Button onClick={onClose}><CloseOutlined /></Button>
                 }
             >
-                <p>Some contents...</p>
+                <MenuList menuList={sortMenus} currentMenu={currentMenu} />
             </Drawer>
         </div>
     )

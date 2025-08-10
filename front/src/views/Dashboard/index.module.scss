@@ -10,6 +10,7 @@
 
         .sideBar {
             width: $menuDefaultWith;
+            min-width: $menuDefaultWith;
             height: 100%;
             transition: all 0.3s linear;
         }
@@ -37,5 +38,6 @@
 .isToSmall {
     .sideBar {
         width: $menuCollapsedWith !important;
+        min-width: $menuCollapsedWith !important;
     }
 }
