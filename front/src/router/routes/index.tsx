@@ -1,10 +1,11 @@
+import Login from '@/views/Login';
 import { lazy } from "react";
 import { Navigate } from 'react-router-dom';
-import Login from '../../views/Login';
 import * as RouterTypes from "../types";
 
-const Dashboard = lazy(() => import("../../views/Dashboard"));
-const NotFound = lazy(() => import("../../views/NotFound"));
+const Dashboard = lazy(() => import("@/views/Dashboard"));
+const NotFound = lazy(() => import("@/views/NotFound"));
+const Home = lazy(() => import("@/views/Dashboard/home"));
 
 const routes: RouterTypes.RouteItem[] = [
     {
@@ -18,7 +19,15 @@ const routes: RouterTypes.RouteItem[] = [
         name: 'dashboard',
         element: <Dashboard />,
         children: [
-
+            {
+                path: "/dashboard/home",
+                name: 'home',
+                element: <Home />,
+            },
+            {
+                index: true,
+                element: <Navigate to='/dashboard/home' />
+            }
         ]
     },
     {

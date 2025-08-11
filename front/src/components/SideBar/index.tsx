@@ -8,20 +8,23 @@ import {
 } from '@ant-design/icons';
 import type { AutoCompleteProps, MenuProps } from 'antd';
 import { AutoComplete, Button, Drawer, Menu } from 'antd';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import sideBar from './index.module.scss';
 import { MenuList } from './menuList';
 
 export default function index() {
-    const menus = useSelector((state: RootState) => state.user.userMenus)
+    const menus = useSelector((state: RootState) => state.menu.menus)
     const collapsed = useSelector((state: RootState) => state.common.collapsed)
-    const sortMenus = [...menus].sort((a, b) => a.sort - b.sort)
     const [open, setOpen] = useState(false);
     const [options, setOptions] = useState<AutoCompleteProps['options']>([]);
     const [currentMenu, setCurrentMenu] = useState<any>({})
 
     type MenuItem = Required<MenuProps>['items'][number];
+
+    useEffect(() => {
+        console.log('111111', menus)
+    }, [])
 
     const toSmallClass = () => {
         let className = []
@@ -36,7 +39,7 @@ export default function index() {
             if (!value) {
                 return [];
             }
-            const filteredMenus = sortMenus.filter(menu =>
+            const filteredMenus = menus.filter(menu =>
                 menu.title.toLowerCase().includes(value.toLowerCase())
             );
             return filteredMenus.map(menu => ({
@@ -46,7 +49,7 @@ export default function index() {
         });
     };
 
-    const items: MenuItem[] = sortMenus.map(menu => {
+    const items: MenuItem[] = menus.map(menu => {
         const IconComponent = getIconComponent(menu.icon);
 
         if (menu.parent_id == 0) {
@@ -116,7 +119,7 @@ export default function index() {
                     <Button onClick={onClose}><CloseOutlined /></Button>
                 }
             >
-                <MenuList menuList={sortMenus} currentMenu={currentMenu} />
+                <MenuList menuList={menus} currentMenu={currentMenu} />
             </Drawer>
         </div>
     )

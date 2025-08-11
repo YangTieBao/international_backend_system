@@ -11,7 +11,6 @@ export const useLanguage = () => {
   const initLanguage = async (isLogin: boolean = false) => {
     try {
       const currentLang = i18n.language;
-      console.log('12312312', currentLang)
 
       setCurrentLanguage(currentLang)
 
@@ -25,6 +24,7 @@ export const useLanguage = () => {
     } catch (err) {
 
     } finally {
+      
     };
   }
 

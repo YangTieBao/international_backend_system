@@ -103,7 +103,7 @@ service.interceptors.request.use(
             };
         }
 
-        const isEncryptResponse = config.isEncryptResponse || null;
+        const isEncryptResponse = config.isEncryptResponse ?? true;
         const requestData = config.data || config.params || null;
 
         try {

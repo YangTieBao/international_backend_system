@@ -1,11 +1,18 @@
+import { menusRequests } from '@/api/menus';
 import SideBar from '@/components/SideBar';
 import TopBar from '@/components/TopBar';
 import type { RootState } from '@/store';
+import { getMenusState } from '@/store';
 import { Watermark } from 'antd';
-import { useSelector } from 'react-redux';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Outlet } from 'react-router-dom';
 import dashbord from './index.module.scss';
+
 export default function index() {
+    const { user_id } = useSelector((state: RootState) => state.user.userInfo)
+    const { getMenus } = menusRequests()
+    const dispatch = useDispatch()
     const collapsed = useSelector((state: RootState) => state.common.collapsed)
     const toSmallClass = () => {
         let className = []
@@ -14,6 +21,18 @@ export default function index() {
         }
         return className.join(' ')
     }
+
+    useEffect(() => {
+        fetchMenus()
+    }, [])
+
+    const fetchMenus = async () => {
+        const response = await getMenus({ user_id: user_id })
+        if (response.code === 200) {
+            dispatch(getMenusState(response.data))
+        }
+    }
+
     return (
         <div id={dashbord.dashbord} className={toSmallClass()}>
             <Watermark content="admin" className={dashbord.waterMark}>
@@ -25,7 +44,6 @@ export default function index() {
                         <TopBar />
                     </div>
                     <section className={dashbord.section}>
-                        section
                         <Outlet />
                     </section>
                 </div>

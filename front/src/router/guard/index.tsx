@@ -1,3 +1,5 @@
+import { messageFunctions } from '@/utils';
+import Cookies from 'js-cookie';
 import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import * as RouterTypes from "../types";
@@ -8,22 +10,22 @@ interface AuthGuardProps {
 }
 
 const AuthGuard = ({ route, children }: AuthGuardProps) => {
+  const { showWarning } = messageFunctions();
   const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
+    const isAuthenticated = Cookies.get('jwtToken');
+
+    if (!isAuthenticated) {
+      navigate("/login", {
+        replace: true
+      });
+      showWarning('会话已过期，请重新登录！')
+    }
+
     // 检查是否需要认证
     if (route.meta?.isAuth) {
-      const userInfoStr = sessionStorage.getItem('userInfo');
-      const userInfo = userInfoStr ? JSON.parse(userInfoStr) : null;
-      const isAuthenticated = userInfo.token ? true : false
-
-      if (!isAuthenticated) {
-        navigate("/login", {
-          replace: true,
-          state: { from: location.pathname }
-        });
-      }
     }
 
   }, [route, navigate, location]);

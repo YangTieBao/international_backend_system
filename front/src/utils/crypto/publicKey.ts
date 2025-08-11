@@ -162,6 +162,6 @@ export const publicKey = () => {
         return JSON.parse(raw);
     }
 
-    return { KEY_STORAGE_NAME, generateAndStoreKey, getEncryptedKeyMaterial, getKeyMaterial }
+    return { KEY_STORAGE_NAME, generateAndStoreKey, getEncryptedKeyMaterial, getKeyMaterial, getPublicKey }
 }
 

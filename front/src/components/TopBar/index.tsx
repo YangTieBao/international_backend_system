@@ -16,6 +16,7 @@ import { Button, Dropdown } from 'antd';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { TopMenu } from './topMenu';
 
 import topBar from './index.module.scss';
 export default function index() {
@@ -85,9 +86,9 @@ export default function index() {
             <Button type="text" onClick={toggleCollapsed} className={topBar.button}>
                 {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
             </Button>
-            <div className={topBar.topMenu}>
-                
-            </div>
+
+            <TopMenu />
+
             <div className={topBar.functions}>
                 <EllipsisOutlined />
                 <ReloadOutlined />

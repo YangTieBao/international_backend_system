@@ -32,22 +32,22 @@ export default function index() {
         autoLogin?: boolean;
     }
 
-    const items: MenuProps['items'] = languageSelectItems.map((lang: any) => ({
+    useEffect(() => {
+        autoLogin()
+        initLanguage(true)
+    }, []);
+
+    const items: MenuProps['items'] = languageSelectItems ? languageSelectItems.map((lang: any) => ({
         key: lang.id,
         label: lang.native_name,
         onClick: () => {
             changeLanguage(lang.code, true)
         }
-    }));
+    })) : [];
 
-    const currentLanguageItem = (languageSelectItems).find(
+    const currentLanguageItem = languageSelectItems ? (languageSelectItems).find(
         (lang: any) => lang.code == currentLanguage
-    );
-
-    useEffect(() => {
-        autoLogin()
-        initLanguage(true)
-    }, []); // 空依赖数组：仅在组件挂载时执行一次
+    ) : null;
 
     const autoLogin = async () => {
         await new Promise(resolve => setTimeout(resolve, 100));
@@ -146,7 +146,7 @@ export default function index() {
             <div className={loginStyle.middle}>
                 <main className={loginStyle.main}>
                     <header className={loginStyle.header}>
-                        欢迎来到国际化后台管理系统！
+                        欢迎来到国际化管理平台！
                     </header>
                     <section className={loginStyle.section}>
                         <Form

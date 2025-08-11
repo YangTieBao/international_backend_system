@@ -2,7 +2,6 @@ import { Body, Controller, Post, Query, Res } from '@snow';
 import { encrypt_decrypt, generateJWTSecret } from '@utils/crypto';
 import { errors } from '@utils/errors';
 import { responses } from '@utils/response';
-import { MenusDao } from '../dao/MenusDao';
 import { UsersDao } from '../dao/UsersDao';
 
 const jwt = require('jsonwebtoken');
@@ -16,7 +15,6 @@ const { handleEncryptedRequest } = encrypt_decrypt()
 @Controller('/users')
 export default class UsersController {
   private readonly usersDao = new UsersDao();
-  private readonly menusDao = new UsersDao();
 
   @Post('/login')
   async login(@Res() res, @Body() body) {
@@ -42,19 +40,6 @@ export default class UsersController {
         return return_401('用户名/手机号码或密码错误')
       }
 
-      const menuSql = `
-        select t1.*
-        from 
-          menus as t1
-        left join 
-          role_menus as t2 on t2.menu_id = t1.id
-        left join 
-          roles as t3 on t3.id  = t2.role_id
-        where 
-          t3.id = ?
-        `
-      const userMenus = await MenusDao.query(menuSql, [userInfo.user_id])
-
       const token = jwt.sign(
         { ...userInfo },
         jwt_secret,
@@ -70,7 +55,7 @@ export default class UsersController {
         path: '/', // 全站有效
       });
 
-      return return_200({ userInfo, userMenus }, symmetricKey, body)
+      return return_200({ userInfo }, symmetricKey, body)
 
     } catch (err) {
       routerError('/users/login', err)
