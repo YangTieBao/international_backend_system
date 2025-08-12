@@ -8,12 +8,14 @@ import {
 } from '@ant-design/icons';
 import type { AutoCompleteProps, MenuProps } from 'antd';
 import { AutoComplete, Button, Drawer, Menu } from 'antd';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import sideBar from './index.module.scss';
 import { MenuList } from './menuList';
 
 export default function index() {
+    const navigate = useNavigate()
     const menus = useSelector((state: RootState) => state.menu.menus)
     const collapsed = useSelector((state: RootState) => state.common.collapsed)
     const [open, setOpen] = useState(false);
@@ -21,10 +23,6 @@ export default function index() {
     const [currentMenu, setCurrentMenu] = useState<any>({})
 
     type MenuItem = Required<MenuProps>['items'][number];
-
-    useEffect(() => {
-        console.log('111111', menus)
-    }, [])
 
     const toSmallClass = () => {
         let className = []
@@ -53,6 +51,17 @@ export default function index() {
         const IconComponent = getIconComponent(menu.icon);
 
         if (menu.parent_id == 0) {
+            if (menu.id === 1) {
+                return {
+                    key: menu.id,
+                    icon: IconComponent ? <IconComponent /> : null,
+                    label: menu.title,
+                    onClick: () => {
+                        navigate('/dashboard/home')
+                    }
+                };
+            }
+
             return {
                 key: menu.id,
                 icon: IconComponent ? <IconComponent /> : null,
@@ -66,7 +75,10 @@ export default function index() {
         return null;
     }).filter(Boolean);
 
-    function getIconComponent(iconType: string) {
+    function getIconComponent(iconType: string = '') {
+        if (iconType) {
+            return;
+        }
         const iconMap = {
             'PieChartOutlined': PieChartOutlined,
             'DesktopOutlined': DesktopOutlined,
@@ -119,7 +131,7 @@ export default function index() {
                     <Button onClick={onClose}><CloseOutlined /></Button>
                 }
             >
-                <MenuList menuList={menus} currentMenu={currentMenu} />
+                <MenuList menuList={menus} currentMenu={currentMenu} onClose={onClose}/>
             </Drawer>
         </div>
     )

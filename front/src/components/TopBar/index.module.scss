@@ -23,11 +23,85 @@
     }
 
     .topMenu {
+        position: relative;
         height: 100%;
         flex: 1;
         display: flex;
         align-items: center;
-        background-color: red;
+        font-size: 12px;
+
+        .topMenuList {
+            height: 100%;
+            margin: 0 16px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            .topMenuItem {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                background: #dcdcdc;
+                border-radius: 4px;
+                padding: 6px 10px;
+                margin-right: 6px;
+
+                &:hover {
+                    .close {
+                        display: flex;
+                    }
+                }
+
+                span {
+                    color: #000;
+                }
+
+                .close {
+                    font-size: 10px;
+                    display: none;
+                    margin-left: 8px;
+
+                    &:hover {
+                        color: $hoverColor;
+                    }
+                }
+            }
+        }
+
+        .topMenuList.isFirst {
+            .topMenuItem:nth-child(1) {
+                // background: #5589f8;
+
+                // span {
+                //     color: #fff;
+                // }
+
+                &:hover {
+                    .close {
+                        display: none;
+                    }
+                }
+            }
+        }
+
+        .leftIcon,
+        .rightIcon {
+            height: 100%;
+            position: absolute;
+            background: #fff;
+            padding: 0 8px;
+            display: none;
+        }
+
+        .leftIcon {
+            left: 0;
+            box-shadow: 3px 0 2px -1px rgba(0, 0, 0, 0.2);
+        }
+
+        .rightIcon {
+            right: 0;
+            box-shadow: -3px 0 2px -1px rgba(0, 0, 0, 0.2);
+        }
     }
 
     .functions {

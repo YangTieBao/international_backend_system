@@ -1,6 +1,9 @@
+import { pushTopMenus } from '@/store';
 import {
     StarOutlined
 } from '@ant-design/icons';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import sideBar from './index.module.scss';
 
 interface CurrentMenu {
@@ -13,6 +16,7 @@ interface CurrentMenu {
 interface PropsValue {
     currentMenu: CurrentMenu;
     menuList: any;
+    onClose: () => void;
 }
 
 interface NestedMenuItem extends CurrentMenu {
@@ -34,11 +38,20 @@ const convertToNestedMenu = (
     }));
 };
 
-export const MenuList = ({ menuList, currentMenu }: PropsValue) => {
+export const MenuList = ({ menuList, currentMenu, onClose }: PropsValue) => {
+    const navigate = useNavigate()
+    const dispatch = useDispatch()
     const treeMenus = convertToNestedMenu(menuList, currentMenu.id)
 
-    const a = () => {
-        console.log('321312312')
+    const isCollect = (e: React.MouseEvent) => {
+        e.stopPropagation() // 阻止事件冒泡
+
+    };
+
+    const skipRoute = (item: any) => {
+        dispatch(pushTopMenus(item))
+        navigate(item.path)
+        onClose()
     }
 
     return (
@@ -53,9 +66,9 @@ export const MenuList = ({ menuList, currentMenu }: PropsValue) => {
                         <ul className={sideBar.thirdItem}>
                             {secondItem.children?.length ? secondItem.children?.map((thirdItem) => {
                                 return (
-                                    <li key={thirdItem.id}>
+                                    <li key={thirdItem.id} onClick={() => skipRoute(thirdItem)}>
                                         <span>{thirdItem.title}</span>
-                                        <StarOutlined onClick={a} className={sideBar.thirdItemStar} />
+                                        <StarOutlined onClick={e => isCollect(e)} className={sideBar.thirdItemStar} />
                                     </li>
                                 )
                             }) : null}

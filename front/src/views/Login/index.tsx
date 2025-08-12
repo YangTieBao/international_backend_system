@@ -193,7 +193,9 @@ export default function index() {
                     </section>
                 </main>
             </div>
-            <div className={loginStyle.bottom}></div>
+            <div className={loginStyle.bottom}>
+                @HNSYZSLSTQ | HNGCXYXXKYYGCXYRJGC | 出版
+            </div>
         </div>
     )
 }
