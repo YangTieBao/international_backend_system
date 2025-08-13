@@ -1,3 +1,4 @@
+import { moduleRoutes } from '@/modules/Routes';
 import Login from '@/views/Login';
 import { lazy } from "react";
 import { Navigate } from 'react-router-dom';
@@ -27,7 +28,8 @@ const routes: RouterTypes.RouteItem[] = [
             {
                 index: true,
                 element: <Navigate to='/dashboard/home' />
-            }
+            },
+            ...moduleRoutes
         ]
     },
     {

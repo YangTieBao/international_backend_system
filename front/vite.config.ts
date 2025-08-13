@@ -10,7 +10,8 @@ export default defineConfig(() => {
     },
     resolve: {
       alias: {
-        '@': '/src'
+        '@': '/src',
+        '@mod':'/src/modules'
       }
     },
     server: {

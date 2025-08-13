@@ -1,10 +1,20 @@
 {
   "compilerOptions": {
     "jsx": "react-jsx",
-    "types": ["node", "axios", "react", "react-dom"],
+    "types": [
+      "node",
+      "axios",
+      "react",
+      "react-dom"
+    ],
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"] 
+      "@/*": [
+        "src/*"
+      ],
+      "@mod/*": [
+        "src/modules/*"
+      ]
     }
   }
 }
