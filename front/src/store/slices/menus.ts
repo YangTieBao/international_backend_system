@@ -9,6 +9,7 @@ interface MenuItem {
     sort?: number;
     type?: number;
     is_visible?: number;
+    isActived?: boolean;
 }
 
 interface Menus {
@@ -21,7 +22,8 @@ const initialState: Menus = {
     topMenus: [{
         id: 1,
         title: '工作台',
-        path: '/dashboard/home'
+        path: '/dashboard/home',
+        isActived: true
     }]
 };
 
@@ -33,16 +35,33 @@ export const menuSlice = createSlice({
             state.menus = action.payload.menus;
         },
         pushTopMenus: (state, action) => {
-            const newItemId = action.payload.id;
+            const newItem = action.payload
+            const newItemId = newItem.id;
             const exists = state.topMenus.some(item => item.id === newItemId);
             if (!exists) {
-                state.topMenus.push(action.payload);
+                state.topMenus.push(newItem);
+                state.topMenus.forEach((item, index) => {
+                    item.isActived = index === state.topMenus.length - 1;
+                });
+            } else {
+                state.topMenus.forEach(item => {
+                    item.isActived = item.id === newItemId;
+                });
             }
+
         },
         filterTopMenus: (state, action) => {
             state.topMenus = state.topMenus.filter(
                 (item) => item.id !== action.payload
             );
+        },
+        activeRoute: (state, action) => {
+            const newItem = action.payload
+            const newItemId = newItem.id;
+            state.topMenus.forEach(item => {
+                item.isActived = item.id === newItemId;
+            });
+
         }
     }
 });

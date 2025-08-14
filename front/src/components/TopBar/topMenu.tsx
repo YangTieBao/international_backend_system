@@ -1,5 +1,5 @@
 import type { RootState } from '@/store';
-import { filterTopMenus } from '@/store';
+import { activeRoute, filterTopMenus } from '@/store';
 import {
     CloseOutlined,
     DoubleLeftOutlined,
@@ -16,13 +16,16 @@ export const TopMenu = () => {
     const topMenus = useSelector((state: RootState) => state.menu.topMenus)
     const [prevLength, setPrevLength] = useState(topMenus.length);
 
+    // 监听topMenus菜单的变化
     useEffect(() => {
         if (topMenus.length < prevLength) {
             const lastItem = topMenus[topMenus.length - 1];
             if (lastItem?.path) {
                 navigate(lastItem.path)
+                dispatch(activeRoute(lastItem))
             } else {
                 navigate('/dashboard/home');
+                dispatch(activeRoute({ id: 1 }))
             }
         }
     }, [topMenus, prevLength, navigate]);
@@ -38,6 +41,7 @@ export const TopMenu = () => {
 
     const skipRoute = (item: any) => {
         navigate(item.path)
+        dispatch(activeRoute(item))
     }
 
     return (
@@ -46,7 +50,7 @@ export const TopMenu = () => {
             <section className={`${topBar.topMenuList} ${topBar.isFirst}`}>
                 {topMenus.map((item) => {
                     return (
-                        <div key={item.id} className={topBar.topMenuItem} onClick={() => skipRoute(item)} >
+                        <div key={item.id} className={`${topBar.topMenuItem} ${item.isActived ? topBar.isActived : ''}`} onClick={() => skipRoute(item)} >
                             <span>{item.title}</span>
                             <CloseOutlined className={topBar.close} onClick={e => filterMenuItem(e, item.id)} />
                         </div>

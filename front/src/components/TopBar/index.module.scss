@@ -38,11 +38,14 @@
             align-items: center;
             cursor: pointer;
 
+            .isActived {
+                background: lightskyblue;
+            }
+
             .topMenuItem {
                 display: flex;
                 justify-content: center;
                 align-items: center;
-                background: #dcdcdc;
                 border-radius: 4px;
                 padding: 6px 10px;
                 margin-right: 6px;
