@@ -10,7 +10,7 @@ dotenv.config();
 
 // 创建Koa应用
 const app = new Koa();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT;
 
 // 连接数据库
 connectDB();
