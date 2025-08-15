@@ -1,5 +1,6 @@
 # 过滤依赖目录（优先使用带斜杠的写法，明确忽略文件夹）
-back/node_modules
+snowback/node_modules
+koaback/node_modules
 front/node_modules
 # Logs
 front/logs
