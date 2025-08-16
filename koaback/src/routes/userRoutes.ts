@@ -1,27 +1,10 @@
 import Router from 'koa-router';
-import { 
-  getAllUsers, 
-  getUserById, 
-  createUser, 
-  updateUser, 
-  deleteUser 
-} from '../services/user/userController';
+import { userController } from '../controllers/userController';
 
 const router = new Router();
+const { login } = userController()
 
-// 获取所有用户
-router.get('/', getAllUsers);
+router.post('/login', login);
 
-// 获取单个用户
-router.get('/:id', getUserById);
-
-// 创建用户
-router.post('/', createUser);
-
-// 更新用户
-router.put('/:id', updateUser);
-
-// 删除用户
-router.delete('/:id', deleteUser);
 
 export default router;

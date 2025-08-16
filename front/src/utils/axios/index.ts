@@ -71,11 +71,6 @@ service.interceptors.request.use(
             config.headers = new AxiosHeaders();
         }
 
-        // const token = Cookies.get('token');
-        // if (token) {
-        //     config.headers.set('Authorization', `Bearer ${token}`);
-        // }
-
         // 检查是否启用了防抖
         const useDebounce = config.useDebounce ?? true;
         const debounceTime = config.debounceTime ?? 1000; // 默认1秒防抖时间
@@ -103,7 +98,7 @@ service.interceptors.request.use(
             };
         }
 
-        const isEncryptResponse = config.isEncryptResponse ?? true;
+        const isEncryptResponse = config.isEncryptResponse;
         const requestData = config.data || config.params || null;
 
         try {
@@ -136,58 +131,96 @@ service.interceptors.request.use(
 );
 
 service.interceptors.response.use(
-    (response: AxiosResponse<ApiResponse>) => {
+    (response: AxiosResponse) => {
         const { config } = response
         const isEncryptResponse = config.isEncryptResponse || null
 
-        if ((response.data?.data?.code !== 200) && (response.data?.data?.code !== 204)) {
-            if (response.data?.data?.code === 401) {
-                setTimeout(() => {
-                    showError(response.data?.data?.message)
-                }, 2000)
-            } else {
-                showError(response.data?.data?.message)
-            }
-        }
-
         if (!isEncryptResponse) {
-            return response.data.data;
+            return response.data;
         }
-        if (response.data?.data?.data) {
+        if (response.data?.data) {
             try {
-                const encryptedResponse = response.data.data.data
+                const encryptedResponse = response.data.data
                 const decryptedData = decrypt(
                     encryptedResponse
                 );
                 try {
-                    response.data.data.data = JSON.parse(decryptedData);
+                    response.data.data = JSON.parse(decryptedData);
                 } catch {
-                    response.data.data.data = decryptedData;
+                    response.data.data = decryptedData;
                 }
             } catch (error) {
                 return Promise.reject({
-                    code: 500,
-                    message: '数据解析失败',
-                    data: null
+                    code: -1,
+                    message: '响应数据解析失败'
                 });
             }
         }
 
-        return response.data.data;
+        return response.data;
     },
     (error: AxiosError) => {
-        // 如果是防抖取消的请求，特殊处理
+        // 处理防抖取消的请求
         if (error.message === 'canceled') {
             return Promise.reject({
                 code: -1,
-                message: '请求被防抖取消',
-                data: null
+                message: '请求被防抖取消'
             });
-        } else {
-            showError('网络请求失败，请稍后重试');
         }
 
-        return Promise.reject(error);
+        if (error.response) {
+            const { status, data } = error.response as any;
+
+            // 未授权
+            if (status === 401) {
+                window.location.href = '/login';
+                return Promise.reject({
+                    code: data?.code || 401,
+                    message: data?.message || '登录已过期，请重新登录'
+                });
+            }
+
+            // 403 权限不足
+            if (status === 403) {
+                return Promise.reject({
+                    code: data?.code || 403,
+                    message: data?.message || '权限不足'
+                });
+            }
+
+            // 404 资源不存在
+            if (status === 404) {
+                return Promise.reject({
+                    code: data?.code || 404,
+                    message: data?.message || '资源不存在'
+                });
+            }
+
+            // 5xx 服务器错误
+            if (status >= 500) {
+                return Promise.reject({
+                    code: data?.code || 500,
+                    message: data?.message
+                });
+            }
+
+            if (data?.message) {
+                showError(data?.message)
+            }
+        }
+
+        // 处理无响应的错误（如网络中断）
+        if (!error.response) {
+            showError('网络连接失败，请检查网络')
+            return Promise.reject({
+                code: -2,
+                message: '网络异常'
+            });
+        }
+
+        // 其他未处理的错误
+        showError('请求失败，请稍后重试')
+        return Promise.reject(error)
     }
 );
 

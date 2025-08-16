@@ -19,7 +19,7 @@ export const connectDB = async () => {
     console.log('数据库连接成功！');
     connection.release();
   } catch (error) {
-    console.log('数据库连接失败！');
+    console.log('数据库连接失败:', error);
     process.exit(1);
   }
 };

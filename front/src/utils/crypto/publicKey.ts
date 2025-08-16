@@ -22,7 +22,7 @@ export const publicKey = () => {
             const response = await fetch(import.meta.env.VITE_API_URL + '/base-api/commons/getPublicKey');
             const publicKey = await response.text();
             const publicKeyJson = JSON.parse(publicKey)
-            const cleanedKey = cleanPublicKey(publicKeyJson.data.data.publicKey);
+            const cleanedKey = cleanPublicKey(publicKeyJson.data.publicKey);
             sessionStorage.setItem(PUBLIC_KEY_STORAGE, cleanedKey);
             return cleanedKey;
         } catch (error) {

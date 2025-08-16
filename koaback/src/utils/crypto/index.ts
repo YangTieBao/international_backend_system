@@ -1,5 +1,6 @@
 import crypto from 'crypto';
 import CryptoJS from 'crypto-js';
+import { EncryptedRequestBody } from '../../types';
 
 // 生成 RSA 密钥对
 const { publicKey, privateKey } = crypto.generateKeyPairSync('rsa', {
@@ -14,21 +15,26 @@ const { publicKey, privateKey } = crypto.generateKeyPairSync('rsa', {
     }
 });
 
+
 //生成jwt密钥
+const jwt_random = crypto.randomBytes(32).toString('hex');
 export const generateJWTSecret = () => {
-    return crypto.randomBytes(32).toString('hex');
+    return `jwt_${jwt_random}`;
 };
 
-export const encrypt_decrypt = () => {
-    interface EncryptedRequest {
-        encryptedData?: string;
-        encryptedKey: string;
-        iv: string;
-        hashAlgorithm: string;
-    }
+//生成cookie密钥
+const cookie_random = crypto.randomBytes(32).toString('hex');
+export const generateCookieSecret = () => {
+    return `cookie_${cookie_random}`;
+};
 
+// 临时保存对称密钥
+let temporarySymmetricKey = ''
+let temporaryIv = ''
+
+export const encrypt_decrypt = () => {
     // 提供公钥
-    const getPublicKey = (): string => publicKey;
+    const setPublicKey = (): string => publicKey;
 
     /**
      * 解密对称密钥
@@ -127,8 +133,8 @@ export const encrypt_decrypt = () => {
      * @returns 解密后的对称密钥和数据
      */
     const handleEncryptedRequest = (
-        requestData: EncryptedRequest
-    ): { symmetricKey: string; jsonDecryptedData: any } => {
+        requestData: EncryptedRequestBody
+    ) => {
         try {
             const { encryptedData, encryptedKey, iv, hashAlgorithm } = requestData;
 
@@ -142,7 +148,11 @@ export const encrypt_decrypt = () => {
                 iv
             );
 
-            return { symmetricKey, jsonDecryptedData };
+            temporarySymmetricKey = symmetricKey
+            temporaryIv = iv
+
+            return jsonDecryptedData;
+
         } catch (error) {
             throw new Error(`处理加密请求失败`);
         }
@@ -156,12 +166,10 @@ export const encrypt_decrypt = () => {
      * @returns 加密后的响应体
      */
     const prepareEncryptedResponse = (
-        data: string | object,
-        symmetricKey: string,
-        requestIv: string
-    ): String => {
+        data: string | object
+    ): string => {
         try {
-            const encryptedData = encryptData(data, symmetricKey, requestIv)
+            const encryptedData = encryptData(data, temporarySymmetricKey, temporaryIv)
             return encryptedData
         } catch (error) {
             throw new Error('加密响应数据失败');
@@ -169,7 +177,7 @@ export const encrypt_decrypt = () => {
     }
 
     return {
-        getPublicKey,
+        setPublicKey,
         handleEncryptedRequest,
         prepareEncryptedResponse
     }
