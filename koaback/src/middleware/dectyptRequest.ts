@@ -13,12 +13,8 @@ export async function decryptRequest(ctx: Context, next: Next) {
 
     const body = ctx.request.body as EncryptedRequestBody
 
-    // console.log('12312312',body)
-
     const decryptedData = handleEncryptedRequest(body)
-
-    // console.log('5555555',decryptedData)
-
+    
     // 替换请求的数据为解密后的数据
     ctx.request.body = { isEncryptResponse: body.isEncryptResponse, ...decryptedData }
 

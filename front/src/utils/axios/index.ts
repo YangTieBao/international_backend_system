@@ -97,6 +97,7 @@ service.interceptors.request.use(
                 controller
             };
         }
+        
 
         const isEncryptResponse = config.isEncryptResponse;
         const requestData = config.data || config.params || null;

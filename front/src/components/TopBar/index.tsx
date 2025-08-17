@@ -3,6 +3,8 @@ import type { RootState } from '@/store';
 import { changeCollapsed } from '@/store';
 import { messageFunctions } from '@/utils';
 import {
+    DoubleLeftOutlined,
+    DoubleRightOutlined,
     EllipsisOutlined,
     MenuFoldOutlined,
     MenuUnfoldOutlined,
@@ -23,30 +25,46 @@ export default function index() {
     const navigate = useNavigate();
     const { showSuccess } = messageFunctions();
     const [collapsed, setCollapsed] = useState(false);
+    const [scrollDirection, setScrollDirection] = useState('');
+    const [isShow, setIsShow] = useState(false);
+    const [count, setCount] = useState(0);
     const { languageSelectItems, initLanguage, changeLanguage } = useLanguage()
     const dispatch = useDispatch()
     const userInfo = useSelector((state: RootState) => state.user.userInfo)
 
-
-    const toggleCollapsed = () => {
-        setCollapsed(!collapsed)
-    };
-
+    // 初始化
     useEffect(() => {
         initLanguage()
     }, [])
 
+    // 监听
     useEffect(() => {
         dispatch(changeCollapsed(collapsed))
     }, [collapsed]);
 
-    const languageItems: MenuProps['items'] = languageSelectItems.map((lang: any) => ({
+    // 切换菜单收缩与扩展
+    const toggleCollapsed = () => {
+        setCollapsed(!collapsed)
+    };
+
+    // 滑动菜单
+    const scrollMenu = (direction: string) => {
+        setCount(prev => prev + 1)
+        setScrollDirection(direction)
+    }
+
+    // 切换是否显示
+    const onChange = (isShow: boolean) => {
+        setIsShow(isShow)
+    }
+
+    const languageItems: MenuProps['items'] = languageSelectItems ? languageSelectItems.map((lang: any) => ({
         key: lang.id,
         label: lang.native_name,
         onClick: () => {
             changeLanguage(lang.code)
         }
-    }));
+    })) : [];
 
     const userItems: MenuProps['items'] = [
         {
@@ -86,9 +104,21 @@ export default function index() {
             <Button type="text" onClick={toggleCollapsed} className={topBar.button}>
                 {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
             </Button>
-
-            <TopMenu />
-
+            <DoubleLeftOutlined
+                style={isShow ? { display: 'flex' } : { display: 'none' }}
+                className={topBar.leftIcon}
+                onClick={() => scrollMenu('left')} 
+            />
+            <TopMenu 
+                count={count} 
+                scrollDirection={scrollDirection} 
+                onChange={onChange} 
+            />
+            <DoubleRightOutlined
+                style={isShow ? { display: 'flex' } : { display: 'none' }}
+                className={topBar.rightIcon}
+                onClick={() => scrollMenu('right')} 
+            />
             <div className={topBar.functions}>
                 <EllipsisOutlined />
                 <ReloadOutlined />

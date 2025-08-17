@@ -78,6 +78,10 @@
         }
 
         .menuList {
+            span {
+                display: block;
+            }
+
             .secondItem {
                 display: flex;
                 flex-direction: column;

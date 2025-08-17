@@ -9,6 +9,7 @@
     box-shadow: 0 2px 8px -2px rgba(0, 0, 0, 0.1);
 
     .button {
+        width: 20px;
         border: none;
         box-shadow: none;
         text-shadow: none;
@@ -22,38 +23,63 @@
         color: $hoverColor;
     }
 
+    .leftIcon,
+    .rightIcon {
+        height: 100%;
+        background: #fff;
+        padding: 0 8px;
+        font-size: 10px;
+        display: none;
+    }
+
+    .leftIcon {
+        left: 0;
+        box-shadow: 3px 0 2px -1px rgba(0, 0, 0, 0.2);
+    }
+
+    .rightIcon {
+        right: 0;
+        box-shadow: -3px 0 2px -1px rgba(0, 0, 0, 0.2);
+    }
+
     .topMenu {
         position: relative;
         height: 100%;
         flex: 1;
         display: flex;
         align-items: center;
-        font-size: 12px;
 
         .topMenuList {
             height: 100%;
+            max-width: calc(100vw - 460px);
+            min-width: 56px;
             margin: 0 16px;
             display: flex;
-            justify-content: center;
+            justify-content: flex-start;
             align-items: center;
             cursor: pointer;
+            overflow: hidden;
 
             .isActived {
                 background: lightskyblue;
+
+                &:hover {
+                    background: lightskyblue !important;
+                }
             }
 
             .topMenuItem {
                 display: flex;
                 justify-content: center;
                 align-items: center;
+                font-size: 12px;
                 border-radius: 4px;
                 padding: 6px 10px;
                 margin-right: 6px;
+                white-space: nowrap;
 
                 &:hover {
-                    .close {
-                        display: flex;
-                    }
+                    background: #dcdcdc;
                 }
 
                 span {
@@ -62,7 +88,6 @@
 
                 .close {
                     font-size: 10px;
-                    display: none;
                     margin-left: 8px;
 
                     &:hover {
@@ -72,46 +97,22 @@
             }
         }
 
+        .topMenuList.maxWidth{
+            max-width: calc(100vw - 510px);
+        }
+
         .topMenuList.isFirst {
             .topMenuItem:nth-child(1) {
-                // background: #5589f8;
-
-                // span {
-                //     color: #fff;
-                // }
-
-                &:hover {
-                    .close {
-                        display: none;
-                    }
+                .close {
+                    display: none;
                 }
             }
-        }
-
-        .leftIcon,
-        .rightIcon {
-            height: 100%;
-            position: absolute;
-            background: #fff;
-            padding: 0 8px;
-            display: none;
-        }
-
-        .leftIcon {
-            left: 0;
-            box-shadow: 3px 0 2px -1px rgba(0, 0, 0, 0.2);
-        }
-
-        .rightIcon {
-            right: 0;
-            box-shadow: -3px 0 2px -1px rgba(0, 0, 0, 0.2);
         }
     }
 
     .functions {
         height: 100%;
-        width: 25%;
-        min-width: 200px;
+        width: 250px;
         display: flex;
         justify-content: space-between;
         align-items: center;
