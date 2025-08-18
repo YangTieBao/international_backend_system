@@ -5,7 +5,7 @@ import {
 } from '@ant-design/icons';
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate,useLocation } from 'react-router-dom';
 import topBar from './index.module.scss';
 
 interface PropsValue {
@@ -15,6 +15,7 @@ interface PropsValue {
 }
 
 export const TopMenu = ({ count, scrollDirection, onChange }: PropsValue) => {
+    const localtion = useLocation()
     const navigate = useNavigate()
     const dispatch = useDispatch()
     const topMenus = useSelector((state: RootState) => state.menu.topMenus)
@@ -37,6 +38,15 @@ export const TopMenu = ({ count, scrollDirection, onChange }: PropsValue) => {
         }
         checkOverflow()
     }, [topMenus, prevLength, navigate]);
+
+    // 监听是否为左侧的工作台触发的路由变化
+    useEffect(()=>{
+        if(localtion.pathname === '/dashboard/home'){
+            dispatch(activeRoute({id:1}))
+        }
+
+    },[localtion])
+
 
     // 监听scrollValue变化，触发滚动
     useEffect(() => {

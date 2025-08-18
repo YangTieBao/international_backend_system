@@ -1,6 +1,5 @@
-
 export default function index() {
     return (
-        <div>404</div>
+        <div>menuManage</div>
     )
 }

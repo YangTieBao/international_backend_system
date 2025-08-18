@@ -8,21 +8,48 @@ import {
 } from '@ant-design/icons';
 import type { AutoCompleteProps, MenuProps } from 'antd';
 import { AutoComplete, Button, Drawer, Menu } from 'antd';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import sideBar from './index.module.scss';
 import { MenuList } from './menuList';
 
 export default function index() {
     const navigate = useNavigate()
+    const location = useLocation()
+    const [selectedKeys, setSelectedKeys] = useState(['1'])
     const menus = useSelector((state: RootState) => state.menu.menus)
+    const topMenus = useSelector((state: RootState) => state.menu.topMenus)
     const collapsed = useSelector((state: RootState) => state.common.collapsed)
     const [open, setOpen] = useState(false);
     const [options, setOptions] = useState<AutoCompleteProps['options']>([]);
     const [currentMenu, setCurrentMenu] = useState<any>({})
 
     type MenuItem = Required<MenuProps>['items'][number];
+
+    // 监听路由变化，更新选中的菜单
+    useEffect(() => {
+        const activedItem = topMenus.find(item => item.isActived === true)
+        if (location.pathname === '/dashboard/home') {
+            setSelectedKeys(
+                ['1']
+            );
+            return;
+        }
+
+        // 找二级菜单的id
+        const secondItem = menus.find(item => item.id === activedItem?.parent_id);
+
+        // 找一级菜单的id
+        const firstItem = menus.find(item => item.id === secondItem?.parent_id)
+
+        const targetKey = firstItem?.id ? [firstItem.id.toString()] : ['1']
+
+        setSelectedKeys(
+            targetKey
+        );
+
+    }, [location.pathname])
 
     const toSmallClass = () => {
         let className = []
@@ -111,7 +138,8 @@ export default function index() {
             </div>
             <Menu
                 className={sideBar.menu}
-                defaultSelectedKeys={['1']}
+                selectedKeys={selectedKeys}
+                // defaultSelectedKeys={['1']}
                 mode="inline"
                 theme="light"
                 inlineCollapsed={collapsed}
@@ -131,7 +159,7 @@ export default function index() {
                     <Button onClick={onClose}><CloseOutlined /></Button>
                 }
             >
-                <MenuList menuList={menus} currentMenu={currentMenu} onClose={onClose}/>
+                <MenuList menuList={menus} currentMenu={currentMenu} onClose={onClose} />
             </Drawer>
         </div>
     )
