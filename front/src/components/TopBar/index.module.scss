@@ -60,19 +60,11 @@
             cursor: pointer;
             overflow: hidden;
 
-            .isActived {
-                background: lightskyblue;
-
-                &:hover {
-                    background: lightskyblue !important;
-                }
-            }
-
             .topMenuItem {
                 display: flex;
                 justify-content: center;
                 align-items: center;
-                font-size: 12px;
+                font-size: 10px;
                 border-radius: 4px;
                 padding: 6px 10px;
                 margin-right: 6px;
@@ -95,9 +87,18 @@
                     }
                 }
             }
+
+            .isActived {
+                font-size: 12px;
+                background: lightskyblue;
+
+                &:hover {
+                    background: lightskyblue;
+                }
+            }
         }
 
-        .topMenuList.maxWidth{
+        .topMenuList.maxWidth {
             max-width: calc(100vw - 510px);
         }
 
