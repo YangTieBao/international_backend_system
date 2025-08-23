@@ -90,10 +90,14 @@
 
             .isActived {
                 font-size: 12px;
-                background: lightskyblue;
+                background: #e8f4ff;
 
                 &:hover {
-                    background: lightskyblue;
+                    background: #e8f4ff;
+                }
+
+                span {
+                    color: #0f5fff;
                 }
             }
         }
