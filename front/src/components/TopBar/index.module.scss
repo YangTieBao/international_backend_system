@@ -152,3 +152,17 @@
         }
     }
 }
+
+// 省略
+.opendMenus {
+    display: flex;
+
+    .icon {
+        margin-left: 4px;
+        font-size: 10px;
+
+        &:hover {
+            color: $hoverColor;
+        }
+    }
+}

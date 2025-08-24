@@ -3,6 +3,7 @@ import type { RootState } from '@/store';
 import { changeCollapsed } from '@/store';
 import { messageFunctions } from '@/utils';
 import {
+    CloseOutlined,
     DoubleLeftOutlined,
     DoubleRightOutlined,
     EllipsisOutlined,
@@ -31,6 +32,7 @@ export default function index() {
     const { languageSelectItems, initLanguage, changeLanguage } = useLanguage()
     const dispatch = useDispatch()
     const userInfo = useSelector((state: RootState) => state.user.userInfo)
+    const topMenus = useSelector((state: RootState) => state.menu.topMenus)
 
     // 初始化
     useEffect(() => {
@@ -91,12 +93,51 @@ export default function index() {
         {
             key: 4,
             label: '退出登录',
+            danger: true,
             onClick: () => {
                 navigate('/login', { replace: true })
                 sessionStorage.clear()
                 showSuccess()
             }
         }
+    ]
+
+    const opendMenus = topMenus.map(item => {
+        return {
+            key: item.id,
+            label: (
+                <div className={topBar.opendMenus}>
+                    <span>{item.title}</span>
+                    <CloseOutlined
+                        className={topBar.icon}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                        }}
+                    />
+                </div>
+            ),
+            onClick: () => {
+
+            }
+        }
+    }) as any
+
+    const ellipsisTopMenus: MenuProps['items'] = [
+        ...opendMenus,
+        {
+            key: 9998,
+            label: '保留当前',
+            onClick: () => {
+
+            }
+        },
+        {
+            key: 9999,
+            label: '关闭所有',
+            onClick: () => {
+
+            }
+        },
     ]
 
     return (
@@ -107,20 +148,22 @@ export default function index() {
             <DoubleLeftOutlined
                 style={isShow ? { display: 'flex' } : { display: 'none' }}
                 className={topBar.leftIcon}
-                onClick={() => scrollMenu('left')} 
+                onClick={() => scrollMenu('left')}
             />
-            <TopMenu 
-                count={count} 
-                scrollDirection={scrollDirection} 
-                onChange={onChange} 
+            <TopMenu
+                count={count}
+                scrollDirection={scrollDirection}
+                onChange={onChange}
             />
             <DoubleRightOutlined
                 style={isShow ? { display: 'flex' } : { display: 'none' }}
                 className={topBar.rightIcon}
-                onClick={() => scrollMenu('right')} 
+                onClick={() => scrollMenu('right')}
             />
             <div className={topBar.functions}>
-                <EllipsisOutlined />
+                <Dropdown menu={{ items: ellipsisTopMenus }} placement="bottomLeft">
+                    <EllipsisOutlined />
+                </Dropdown>
                 <ReloadOutlined />
                 <MessageOutlined />
                 <Dropdown menu={{ items: languageItems }} placement="bottomLeft">
