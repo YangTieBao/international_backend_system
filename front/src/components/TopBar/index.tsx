@@ -1,6 +1,6 @@
 import { useLanguage } from '@/hooks/useLanguage';
 import type { RootState } from '@/store';
-import { changeCollapsed } from '@/store';
+import { activeRoute, changeCollapsed, filterTopMenus } from '@/store';
 import { messageFunctions } from '@/utils';
 import {
     CloseOutlined,
@@ -43,6 +43,18 @@ export default function index() {
     useEffect(() => {
         dispatch(changeCollapsed(collapsed))
     }, [collapsed]);
+
+    // 监听topMenus菜单的变化
+    useEffect(() => {
+        const lastItem = topMenus[topMenus.length - 1];
+        if (lastItem?.path) {
+            navigate(lastItem.path)
+            dispatch(activeRoute(lastItem))
+        } else {
+            navigate('/dashboard/home');
+            dispatch(activeRoute({ id: 1 }))
+        }
+    }, [topMenus.length]);
 
     // 切换菜单收缩与扩展
     const toggleCollapsed = () => {
@@ -103,6 +115,7 @@ export default function index() {
     ]
 
     const opendMenus = topMenus.map(item => {
+        if (item.id === 1) return;
         return {
             key: item.id,
             label: (
@@ -112,17 +125,26 @@ export default function index() {
                         className={topBar.icon}
                         onClick={(e) => {
                             e.stopPropagation();
+                            dispatch(filterTopMenus(item.id))
                         }}
                     />
                 </div>
             ),
             onClick: () => {
-
+                navigate(item.path)
+                dispatch(activeRoute({ id: item.id }))
             }
         }
     }) as any
 
     const ellipsisTopMenus: MenuProps['items'] = [
+        {
+            key: 1,
+            label: '工作台',
+            onClick: () => {
+                navigate('/dashboard/home')
+            }
+        },
         ...opendMenus,
         {
             key: 9998,
