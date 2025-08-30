@@ -1,26 +1,59 @@
 .navbar {
-    width: calc(100% + 20px);
-    height: 28px;
-    background: #fff;
-    margin: 0 -10px 10px;
-    padding: 0 10px;
-    box-shadow: 0 2px 8px -2px rgba(0, 0, 0, 0.1);
-    align-items: flex-end;
+    width: 100%;
+    height: 100%;
 
-    :global(.ant-tag){
-        height: 22px;
-        background-color: #efefef;
-        border-radius: 4px 4px 0 0;
-        margin-right: 4px;
-        cursor: pointer;
+    .tabs {
+        height: 100%;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
 
-        &.actived{
-            background: #e8f4ff;
-            color:#0f5fff;
+        :global(.ant-tabs-nav) {
+            height: 28px;
+            width: calc(100% + 20px);
+            padding: 0 10px;
+            margin: 0 -10px 10px;
+            background: #fff;
+
+            :global(.ant-tabs-nav-wrap) {
+                display: flex;
+                align-items: flex-end;
+
+                :global(.ant-tabs-nav-list) {
+                    height: 80%;
+
+                    :global(.ant-tabs-tab) {
+                        font-size: 10px;
+                        border-radius: 4px 4px 0 0;
+                        background-color: rgb(237, 239, 242);
+                        border: none;
+
+                        &:hover {
+                            color: $activeColor;
+                        }
+
+                        button {
+                            font-size: 8px;
+                            margin-left: 4px;
+
+                            &:hover {
+                                color: $activeColor;
+                            }
+                        }
+                    }
+
+                    :global(.ant-tabs-tab.ant-tabs-tab-active) {
+                        color: $activeColor;
+                    }
+                }
+            }
         }
 
-        &:hover{
-            background: #e8f4ff;
+        :global(.ant-tabs-content-holder) {
+            width: 100%;
+            flex: 1;
+            background: #fff;
+            padding: 10px;
         }
     }
 }

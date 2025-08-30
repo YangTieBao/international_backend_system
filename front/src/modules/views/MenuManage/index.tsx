@@ -1,11 +1,16 @@
-import FormWrapper from '@/components/FormWrapper'
 import NavBar from '@/components/NavBar'
+import List from './list'
 
 export default function index() {
+    const initialItems = [
+        {
+            key: 1,
+            label: '菜单管理列表',
+            children: <List />,
+            closable: false
+        },
+    ]
     return (
-        <div className="commonPage">
-            <NavBar></NavBar>
-            <FormWrapper></FormWrapper>
-        </div>
+        <NavBar initialItems={initialItems}></NavBar>
     )
 }
