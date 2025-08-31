@@ -52,8 +52,13 @@
         :global(.ant-tabs-content-holder) {
             width: 100%;
             flex: 1;
+            box-sizing: border-box;
             background: #fff;
             padding: 10px;
+
+            :global(.ant-tabs-content),:global(.ant-tabs-tabpane) {
+                height: 100%;
+            }
         }
     }
 }

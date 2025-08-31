@@ -81,7 +81,13 @@
                     }
 
                     button {
+                        font-size: 14px;
+                        height: 32px;
                         width: 100%;
+                    }
+
+                    :global(.ant-input-affix-wrapper) {
+                        height: 32px;
                     }
                 }
             }

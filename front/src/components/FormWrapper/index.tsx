@@ -7,8 +7,7 @@ import {
     Form,
     Input,
     Row,
-    Select,
-    Space
+    Select
 } from 'antd';
 import { useState } from 'react';
 import search from './index.module.scss';
@@ -48,59 +47,65 @@ export default function index({ initForms }: FromProps) {
     const [form] = Form.useForm();
     const [expand, setExpand] = useState(false);
 
-    const formItemType = (type: string, placeholder?: any, options?: OptionItem[], onSearch?: () => void) => {
+    const changeExpand = () => {
+        const isExpand = !expand
+        setExpand(isExpand)
+    }
+
+    const formItemType = (item: FormItem) => {
+        const { type, placeholder, allowClear, options, onSearch } = item as any
         let result = null
 
         if (type === 'text') {
             // 文本输入框
-            result = <Input placeholder={placeholder} />
+            result = <Input placeholder={placeholder} allowClear={allowClear} />
         } else if (type === 'search') {
             // 搜索框
-            result = <Search placeholder={placeholder} onSearch={onSearch} />
+            result = <Search placeholder={placeholder} onSearch={onSearch} allowClear={allowClear} />
         } else if (type === 'select') {
             // 选择框
-            result = <Select placeholder={placeholder} options={options} />
+            result = <Select placeholder={placeholder} options={options} allowClear={allowClear} />
         } else if (type === 'multipleSelect') {
             // 多个选择框
-            result = <Select mode="multiple" placeholder={placeholder} options={options} maxTagCount='responsive' />
+            result = <Select mode="multiple" placeholder={placeholder} options={options} maxTagCount='responsive' allowClear={allowClear} />
         } else if (type === 'date') {
             // 日期选择
-            result = <DatePicker placeholder={placeholder} />
+            result = <DatePicker placeholder={placeholder} allowClear={allowClear} />
         } else if (type === 'datetime') {
             // 时间选择
-            result = <DatePicker placeholder={placeholder} showTime />
+            result = <DatePicker placeholder={placeholder} showTime allowClear={allowClear} />
         } else if (type === 'week') {
             // 周期选择
-            result = <DatePicker placeholder={placeholder} picker="week" />
+            result = <DatePicker placeholder={placeholder} picker="week" allowClear={allowClear} />
         } else if (type === 'month') {
             // 月份选择
-            result = <DatePicker placeholder={placeholder} picker="month" />
+            result = <DatePicker placeholder={placeholder} picker="month" allowClear={allowClear} />
         } else if (type === 'quarter') {
             // 季节选择
-            <DatePicker placeholder={placeholder} picker="quarter" />
+            result = <DatePicker placeholder={placeholder} picker="quarter" allowClear={allowClear} />
         } else if (type === 'year') {
             // 年份选择
-            <DatePicker placeholder={placeholder} picker="year" />
+            result = <DatePicker placeholder={placeholder} picker="year" allowClear={allowClear} />
         } else if (type === 'dateRange') {
             // 日期范围
-            result = <RangePicker placeholder={placeholder} />
+            result = <RangePicker placeholder={placeholder} allowClear={allowClear} />
         } else if (type === 'datetimeRange') {
             // 时间范围
-            result = <RangePicker placeholder={placeholder} showTime />
+            result = <RangePicker placeholder={placeholder} showTime allowClear={allowClear} />
         } else if (type === 'weekRange') {
             // 周期范围
-            result = <RangePicker placeholder={placeholder} picker="week" />
+            result = <RangePicker placeholder={placeholder} picker="week" allowClear={allowClear} />
         } else if (type === 'monthRange') {
             // 月份范围
-            result = <RangePicker placeholder={placeholder} picker="month" />
+            result = <RangePicker placeholder={placeholder} picker="month" allowClear={allowClear} />
         } else if (type === 'quarterRange') {
             // 季节范围
-            result = <RangePicker placeholder={placeholder} picker="quarter" />
+            result = <RangePicker placeholder={placeholder} picker="quarter" allowClear={allowClear} />
         } else if (type === 'yearRange') {
             // 年份范围
-            result = <RangePicker placeholder={placeholder} picker="year" />
+            result = <RangePicker placeholder={placeholder} picker="year" allowClear={allowClear} />
         } else {
-            result = <Input placeholder={placeholder} />
+            result = <Input placeholder={placeholder} allowClear={allowClear} />
         }
 
         return result
@@ -113,43 +118,38 @@ export default function index({ initForms }: FromProps) {
     return (
         <Form
             form={form}
-            name="advanced_search"
+            name="search"
             size="small"
             className={search.form}
             onFinish={onFinish}>
             <Flex justify="space-between" align="flex-start" className={search.flex}>
-                <Row gutter={24}>
+                <Row gutter={12} className={`${search.row} ${expand ? search.autoHeight : ''}`}>
                     {initFormsAgain.map(item => {
                         return (
-                            <Col key={item.key} xs="24" md="24" lg="12" xl="8" xxl="6">
-                                <Form.Item label={item.label}>
-                                    {formItemType(item.type, item?.placeholder, item?.options, item?.onSearch)}
+                            <Col key={item.key} xs={24} md={12} lg={8} xl={8} xxl={6}>
+                                <Form.Item label={item.label} name={item.key}>
+                                    {formItemType(item)}
                                 </Form.Item>
                             </Col>
                         )
                     })}
                 </Row>
-                <div style={{ textAlign: 'right' }}>
-                    <Space size="small">
-                        <Button type="primary" htmlType="submit">
-                            Search
-                        </Button>
-                        <Button
-                            onClick={() => {
-                                form.resetFields();
-                            }}
-                        >
-                            Clear
-                        </Button>
-                        <a
-                            style={{ fontSize: 12 }}
-                            onClick={() => {
-                                setExpand(!expand);
-                            }}
-                        >
-                            <DownOutlined rotate={expand ? 180 : 0} /> Collapse
-                        </a>
-                    </Space>
+                <div className={search.btns}>
+                    <Button type="primary" htmlType="submit">
+                        搜索
+                    </Button>
+                    <Button
+                        className={search.reset}
+                        onClick={() => {
+                            form.resetFields();
+                        }}
+                    >
+                        重置
+                    </Button>
+                    {initFormsAgain?.length > 6 ? <div className={search.expand} onClick={changeExpand}>
+                        <span>展开</span>
+                        <DownOutlined />
+                    </div> : null}
                 </div>
             </Flex>
         </Form>

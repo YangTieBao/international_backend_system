@@ -1,0 +1,10 @@
+.list {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+
+    .tableView {
+        flex: 1;
+        box-sizing: border-box;
+    }
+}

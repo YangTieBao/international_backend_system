@@ -1,7 +1,68 @@
 .form {
+    height:auto;
     width: 100%;
 
     .flex {
         width: 100%;
+
+        .row{
+            max-height:60px;
+            overflow: hidden;
+            transition: max-height 0.6s linear;
+        }
+
+        .autoHeight{
+            max-height:180px;
+        }
+
+        :global(.ant-form-item) {
+            margin-bottom: 6px;
+
+            :global(.ant-form-item-label) {
+                width: calc(36% - 4px);
+                margin-right: 2px;
+
+                label {
+                    font-size: 12px;
+                }
+            }
+
+            :global(.ant-form-item-control) {
+                width: 64%;
+
+                input,
+                span {
+                    font-size: 12px;
+                }
+
+            }
+
+        }
+
+        .btns {
+            min-width: 160px;
+            display: flex;
+            justify-content: flex-end;
+
+            .reset {
+                margin: 0 6px;
+            }
+
+            .expand {
+                font-size: 10px;
+                display: flex;
+                justify-content: flex-start;
+                align-items: center;
+                cursor: pointer;
+
+                &:hover {
+                    color: $hoverColor;
+                }
+            }
+        }
     }
+}
+
+:global(.ant-picker) {
+    width: 100%;
 }

@@ -3,3 +3,17 @@
         font-size: 12px;
     }
 }
+
+// 输入框，下拉框，日期选择器的高度
+.ant-input-affix-wrapper,
+.ant-picker,
+.ant-select,
+.ant-input-group-wrapper {
+    height: 24px;
+}
+
+// 按钮
+.ant-btn {
+    height: 22px;
+    font-size: 10px;
+}
