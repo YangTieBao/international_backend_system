@@ -17,8 +17,8 @@
         }
 
         .main {
-            flex: 1;
-            height: 100%;
+            width: calc(100vw - $menuDefaultWith);
+            height: 100vh;
             display: flex;
             flex-direction: column;
 
@@ -42,5 +42,9 @@
     .sideBar {
         width: $menuCollapsedWith !important;
         min-width: $menuCollapsedWith !important;
+    }
+
+    .main {
+        width: calc(100vw - $menuCollapsedWith) !important;
     }
 }

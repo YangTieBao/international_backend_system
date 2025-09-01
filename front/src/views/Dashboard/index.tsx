@@ -2,9 +2,9 @@ import { menusRequests } from '@/api/menus';
 import SideBar from '@/components/SideBar';
 import TopBar from '@/components/TopBar';
 import type { RootState } from '@/store';
-import { getMenusState } from '@/store';
+import { changeCollapsed, getMenusState } from '@/store';
 import { Watermark } from 'antd';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Outlet } from 'react-router-dom';
 import dashbord from './index.module.scss';
@@ -14,6 +14,8 @@ export default function index() {
     const { getMenus } = menusRequests()
     const dispatch = useDispatch()
     const collapsed = useSelector((state: RootState) => state.common.collapsed)
+    const dashboardRef = useRef<HTMLDivElement>(null);
+    const resizeObserverRef = useRef<ResizeObserver | null>(null);
     const toSmallClass = () => {
         let className = []
         if (collapsed) {
@@ -23,8 +25,38 @@ export default function index() {
     }
 
     useEffect(() => {
+        // 渲染菜单
         fetchMenus()
+
+        resizeObserverRef.current = new ResizeObserver((entries) => {
+            const targetEntry = entries[0];
+            if (targetEntry) {
+                const containerWidth = targetEntry.target.clientWidth;
+                handleWidthChange(containerWidth);
+            }
+        })
+
+        if (dashboardRef.current) {
+            const initialWidth = dashboardRef.current.clientWidth
+            handleWidthChange(initialWidth)
+
+            resizeObserverRef.current.observe(dashboardRef.current)
+        }
+
+        return () => {
+            if (resizeObserverRef.current && dashboardRef.current) {
+                resizeObserverRef.current.unobserve(dashboardRef.current)
+            }
+        }
     }, [])
+
+    const handleWidthChange = (width: number) => {
+        if (width < 860) {
+            dispatch(changeCollapsed(true));
+        } else {
+            dispatch(changeCollapsed(false));
+        }
+    };
 
     const fetchMenus = async () => {
         const response = await getMenus({ user_id: user_id })
@@ -46,7 +78,7 @@ export default function index() {
     const watermarkContent = name ? [name, today] : ['管理员', today]
 
     return (
-        <div id={dashbord.dashbord} className={toSmallClass()}>
+        <div id={dashbord.dashbord} className={toSmallClass()} ref={dashboardRef}>
             <Watermark
                 width={120}
                 content={watermarkContent}

@@ -167,3 +167,9 @@
         }
     }
 }
+
+@media screen and (max-width: 860px) {
+    .userName {
+        display: none !important;
+    }
+}

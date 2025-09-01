@@ -1,3 +1,38 @@
-.table {
-    flex:1;
+.tableView {
+    flex: 1;
+    height: 100%;
+    width: 100%;
+    overflow: auto;
+
+    :global(.ant-table-thead) {}
+
+    :global(.ant-table-tbody) {}
+
+    tr {
+        height: 36px;
+    }
+
+    :global(.ant-table-cell) {
+        font-size: 12px;
+
+        span {
+            font-size: 10px;
+        }
+    }
+}
+
+// 滚动条
+.tableView::-webkit-scrollbar {
+    width: 8px;
+}
+
+// 滚动条背景颜色
+.tableView::-webkit-scrollbar-track {
+    // background: rgba(5,5,5,0.06);
+}
+
+// 滚动条样式
+.tableView::-webkit-scrollbar-thumb {
+    background: rgba(5,5,5,0.06);
+    border-radius: 4px;
 }

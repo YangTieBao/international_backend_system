@@ -1,6 +1,6 @@
 import FormWrapper from '@/components/FormWrapper';
 import TableView from '@/components/TableView';
-import list from './index.module.scss';
+import './index.scss';
 
 export default function index() {
     const initForms = [
@@ -98,7 +98,7 @@ export default function index() {
 
     const tableHeader: any = [
         {
-            title: 'Name',
+            title: 'Name111111111111111111111',
             dataIndex: 'name',
             key: 'name',
             filters: [
@@ -106,6 +106,7 @@ export default function index() {
                 { text: 'Jim', value: 'Jim' },
             ],
             ellipsis: true,
+            // width:20
         },
         {
             title: 'Age',
@@ -126,7 +127,7 @@ export default function index() {
 
     ];
     return (
-        <div className={list.list}>
+        <div className='list'>
             <FormWrapper initForms={initForms}></FormWrapper>
             <TableView
                 tableHeader={tableHeader}

@@ -1,13 +1,36 @@
 import { Table } from 'antd';
 import tableView from './index.module.scss';
 
+interface TableHeader {
+    align?: string;
+    className?: string;
+    colSpan?: number;
+    dataIndex?: string | string[];
+    defaultFilteredValue?: string[];
+    filterResetToDefaultFilteredValue?: boolean;
+    defaultSortOrder?: string; // 'ascend' | 'descend'
+    ellipsis?: boolean;
+    fixed?: boolean | string;
+    key?: number | string;
+    width?: number | string;
+    minWidth?: number | string;
+    hidden?: boolean;
+}
+
 interface TableFrops {
-    tableHeader: [];
+    tableHeader: TableHeader[];
     url?: string;
     method?: string;
 }
 
 export default function index({ tableHeader }: TableFrops) {
+    const tableHeaderAgain = tableHeader.map(item => {
+        return {
+            ...item,
+            width: item.width || 10
+        }
+    }) as any
+
 
     const data: any[] = [
         {
@@ -89,13 +112,16 @@ export default function index({ tableHeader }: TableFrops) {
 
     return (
         <Table
-            className={tableView.table}
-            columns={tableHeader}
+            className={tableView.tableView}
+            columns={tableHeaderAgain}
             dataSource={data}
             size="small"
+            bordered={false}
+            sticky={true}
             virtual={true}
             loading={false}
-            scroll={{ x: 'max-content', y: 410 }}
+            pagination={false}
+            scroll={{ x: 'max-content' }}
             onChange={handleChange}
         />
     );

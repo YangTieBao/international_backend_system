@@ -7,11 +7,11 @@ import {
     DoubleLeftOutlined,
     DoubleRightOutlined,
     EllipsisOutlined,
+    GlobalOutlined,
     MenuFoldOutlined,
     MenuUnfoldOutlined,
     MessageOutlined,
     ReloadOutlined,
-    TranslationOutlined,
     UserOutlined
 } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
@@ -189,7 +189,7 @@ export default function index() {
                 <ReloadOutlined />
                 <MessageOutlined />
                 <Dropdown menu={{ items: languageItems }} placement="bottomLeft">
-                    <TranslationOutlined />
+                    <GlobalOutlined />
                 </Dropdown>
                 <div className={topBar.user}>
                     <Dropdown menu={{ items: userItems }} placement="bottomLeft">
