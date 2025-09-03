@@ -17,3 +17,23 @@
     height: 22px;
     font-size: 10px;
 }
+
+// tooltip
+.ant-tooltip {
+    .ant-tooltip-arrow {
+        left: 4px;
+        font-size: 8px;
+    }
+
+    .ant-tooltip-content {
+        .ant-tooltip-inner {
+            font-size: 10px;
+            padding: 4px 8px;
+            min-height: 16px;
+            min-width: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    }
+}

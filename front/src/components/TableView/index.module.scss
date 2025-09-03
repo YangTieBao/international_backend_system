@@ -4,7 +4,11 @@
     width: 100%;
     overflow: auto;
 
-    :global(.ant-table-thead) {}
+    :global(.ant-table-thead) {
+        :global(.ant-table-cell) {
+            background-color: rgb(242, 242, 242);
+        }
+    }
 
     :global(.ant-table-tbody) {}
 
@@ -33,6 +37,6 @@
 
 // 滚动条样式
 .tableView::-webkit-scrollbar-thumb {
-    background: rgba(5,5,5,0.06);
+    background: rgba(5, 5, 5, 0.06);
     border-radius: 4px;
 }

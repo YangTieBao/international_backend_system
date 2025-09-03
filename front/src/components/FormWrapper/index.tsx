@@ -1,4 +1,4 @@
-import { DownOutlined } from '@ant-design/icons';
+import { DownOutlined, UpOutlined } from '@ant-design/icons';
 import {
     Button,
     Col,
@@ -117,10 +117,14 @@ export default function index({ initForms }: FromProps) {
 
     return (
         <Form
+            className={search.form}
             form={form}
             name="search"
+            colon={false}
             size="small"
-            className={search.form}
+            layout="inline"
+            labelAlign="right"
+            labelWrap={false}
             onFinish={onFinish}>
             <Flex justify="space-between" align="flex-start" className={search.flex}>
                 <Row gutter={12} className={`${search.row} ${expand ? search.autoHeight : ''}`}>
@@ -147,8 +151,16 @@ export default function index({ initForms }: FromProps) {
                         重置
                     </Button>
                     {initFormsAgain?.length > 6 ? <div className={search.expand} onClick={changeExpand}>
-                        <span>展开</span>
-                        <DownOutlined />
+                        {!expand ?
+                            <div>
+                                <span>展开</span>
+                                <DownOutlined />
+                            </div> :
+                            <div>
+                                <span>收起</span>
+                                <UpOutlined />
+                            </div>
+                        }
                     </div> : null}
                 </div>
             </Flex>

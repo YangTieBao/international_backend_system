@@ -1,7 +1,8 @@
-import { Table } from 'antd';
+import { Table, Tooltip } from 'antd';
 import tableView from './index.module.scss';
 
 interface TableHeader {
+    title?: any;
     align?: string;
     className?: string;
     colSpan?: number;
@@ -13,21 +14,48 @@ interface TableHeader {
     fixed?: boolean | string;
     key?: number | string;
     width?: number | string;
-    minWidth?: number | string;
+    minWidth?: number;
     hidden?: boolean;
+    render?: any;
 }
 
 interface TableFrops {
     tableHeader: TableHeader[];
     url?: string;
     method?: string;
+    selectionType?: string | any;
 }
 
-export default function index({ tableHeader }: TableFrops) {
-    const tableHeaderAgain = tableHeader.map(item => {
+export default function index({ tableHeader, selectionType }: TableFrops) {
+    const tableHeaderPushIndex = [
+        {
+            title: '序列',
+            dataIndex: 'key',
+        },
+        ...tableHeader
+    ]
+    const tableHeaderAgain = tableHeaderPushIndex.map(item => {
+        if (item.dataIndex === 'key') {
+            return {
+                ...item,
+                width: 40,
+                fixed: true
+            }
+        }
         return {
             ...item,
-            width: item.width || 10
+            title: () => (<Tooltip
+                title={item.title}
+                placement="topLeft"
+            >
+                {item.title}
+            </Tooltip>),
+            width: item.width || 100,
+            ellipsis: item.ellipsis || true,
+            render: (value: any) => (
+                <Tooltip placement="topLeft" title={value}>
+                    {value}
+                </Tooltip>)
         }
     }) as any
 
@@ -115,13 +143,15 @@ export default function index({ tableHeader }: TableFrops) {
             className={tableView.tableView}
             columns={tableHeaderAgain}
             dataSource={data}
+            rowSelection={{ type: selectionType, columnWidth: 32 }}
+            tableLayout="fixed"
             size="small"
             bordered={false}
             sticky={true}
             virtual={true}
             loading={false}
             pagination={false}
-            scroll={{ x: 'max-content' }}
+            scroll={{ x: '100%' }}
             onChange={handleChange}
         />
     );
