@@ -4,8 +4,13 @@ import TableView from '@/components/TableView';
 import { format } from '@/utils';
 import { Tooltip } from 'antd';
 import { useState } from 'react';
+import Edit from './edit';
 import './index.scss';
-export default function index() {
+
+interface ListProps {
+    addTab: (value: any) => void;
+}
+export default function index({ addTab }: ListProps) {
     const { formatTime } = format()
     const [queryParams, setQueryParams] = useState([]) as any
     const operationButtons = [
@@ -14,7 +19,12 @@ export default function index() {
             prop: '查看',
             type: 'link',
             onClick: () => {
-                console.log('查看操作')
+                addTab({
+                    key: 3,
+                    label: '查看菜单',
+                    children: <Edit />,
+                    closable: true
+                })
             }
         },
         {
@@ -22,7 +32,12 @@ export default function index() {
             prop: '编辑',
             type: 'link',
             onClick: () => {
-                console.log('编辑操作')
+                addTab({
+                    key: 4,
+                    label: '编辑菜单',
+                    children: <Edit />,
+                    closable: true
+                })
             }
         },
         {
@@ -40,7 +55,12 @@ export default function index() {
             prop: '新增',
             type: 'primary',
             onClick: () => {
-                console.log('新增操作')
+                addTab({
+                    key: 2,
+                    label: '新增菜单',
+                    children: <Edit />,
+                    closable: true
+                })
             }
         },
     ] as any
