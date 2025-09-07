@@ -1,42 +1,102 @@
-.tableView {
+.table {
     flex: 1;
-    height: 100%;
     width: 100%;
-    overflow: auto;
+    min-height: calc(100% - 190px);
+    display: flex;
+    flex-direction: column;
 
-    :global(.ant-table-thead) {
-        :global(.ant-table-cell) {
-            background-color: rgb(242, 242, 242);
-        }
-    }
+    .pagination {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        height: 24px;
+        margin-top: 10px;
 
-    :global(.ant-table-tbody) {}
-
-    tr {
-        height: 36px;
-    }
-
-    :global(.ant-table-cell) {
-        font-size: 12px;
-
-        span {
+        li {
             font-size: 10px;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            span,
+            a {
+                font-size: 10px;
+            }
+
+            a {
+                height: 100%;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+            button {
+                display: flex !important;
+                justify-content: center;
+                align-items: center;
+            }
+
+            :global(.ant-select),
+            :global(.ant-pagination-options-quick-jumper) {
+                font-size: 10px;
+                height: 100%;
+                display: flex;
+                align-items: center;
+
+                input {
+                    font-size: 10px;
+                    height: 100%;
+                }
+            }
         }
     }
-}
 
-// 滚动条
-.tableView::-webkit-scrollbar {
-    width: 8px;
-}
+    .tableView {
+        height: 100%;
+        width: 100%;
+        overflow: auto;
 
-// 滚动条背景颜色
-.tableView::-webkit-scrollbar-track {
-    // background: rgba(5,5,5,0.06);
-}
+        :global(.ant-table-thead) {
+            :global(.ant-table-cell) {
+                background-color: rgb(242, 242, 242);
+            }
+        }
 
-// 滚动条样式
-.tableView::-webkit-scrollbar-thumb {
-    background: rgba(5, 5, 5, 0.06);
-    border-radius: 4px;
+        :global(.ant-table-tbody) {}
+
+        tr {
+            height: 36px;
+        }
+
+        :global(.ant-table-cell) {
+            font-size: 12px;
+
+            span {
+                font-size: 10px;
+            }
+        }
+
+        :global(.ant-pagination) {
+            position: sticky;
+            bottom: 0;
+            margin-bottom: 0 !important;
+        }
+    }
+
+    // 滚动条
+    .tableView::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    // 滚动条背景颜色
+    .tableView::-webkit-scrollbar-track {
+        // background: rgba(5,5,5,0.06);
+    }
+
+    // 滚动条样式
+    .tableView::-webkit-scrollbar-thumb {
+        background: rgba(5, 5, 5, 0.06);
+        border-radius: 4px;
+    }
 }

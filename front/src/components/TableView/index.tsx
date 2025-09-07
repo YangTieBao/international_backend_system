@@ -1,4 +1,4 @@
-import { Table, Tooltip } from 'antd';
+import { Pagination, Table, Tooltip } from 'antd';
 import tableView from './index.module.scss';
 
 interface TableHeader {
@@ -139,20 +139,32 @@ export default function index({ tableHeader, selectionType }: TableFrops) {
     };
 
     return (
-        <Table
-            className={tableView.tableView}
-            columns={tableHeaderAgain}
-            dataSource={data}
-            rowSelection={{ type: selectionType, columnWidth: 32 }}
-            tableLayout="fixed"
-            size="small"
-            bordered={false}
-            sticky={true}
-            virtual={true}
-            loading={false}
-            pagination={false}
-            scroll={{ x: '100%' }}
-            onChange={handleChange}
-        />
+        <div className={tableView.table}>
+            <Table
+                className={tableView.tableView}
+                columns={tableHeaderAgain}
+                dataSource={data}
+                rowSelection={{ type: selectionType, columnWidth: 32 }}
+                tableLayout="fixed"
+                size="small"
+                bordered={false}
+                sticky={true}
+                virtual={true}
+                loading={false}
+                pagination={false}
+                scroll={{ x: '100%' }}
+                onChange={handleChange}
+            />
+            <Pagination
+                className={tableView.pagination}
+                pageSizeOptions={[15, 30, 60, 120, 1500]}
+                total={850}
+                showSizeChanger
+                showQuickJumper
+                showTotal={(total) => `共 ${total} 条数据`}
+                defaultPageSize={15}
+                defaultCurrent={1}
+            />
+        </div>
     );
 }
