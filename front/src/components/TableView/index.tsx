@@ -1,4 +1,6 @@
+import { tableRequests } from '@/api/index';
 import { Pagination, Table, Tooltip } from 'antd';
+import { useEffect, useState } from 'react';
 import tableView from './index.module.scss';
 
 interface TableHeader {
@@ -23,14 +25,17 @@ interface TableFrops {
     tableHeader: TableHeader[];
     url?: string;
     method?: string;
-    rowSelection?: any; // hideSelectAll => 是否显示全选，type =>有radio与checkbox
+    rowSelection?: any; // hideSelectAll(是否显示全选) => boolean(true/false)，type(类型) => 'radio' 与 'checkbox'
     queryParams?: any[];
     defaultPageSize?: number;
     defaultCurrent?: number;
     pageSizeOptions?: number[];
 }
 
-export default function index({ tableHeader, defaultPageSize = 15, defaultCurrent = 1, pageSizeOptions = [15, 30, 60, 120, 1500], rowSelection = {}, queryParams = [] }: TableFrops) {
+export default function index({ tableHeader, defaultPageSize = 15, defaultCurrent = 1, pageSizeOptions = [15, 30, 60, 120, 1500], rowSelection = {}, url, method = 'post', queryParams = [] }: TableFrops) {
+    const tableRequest = tableRequests()
+    const [tableData, setTableData] = useState([])
+
     const rowSelectionAgain = {
         hideSelectAll: rowSelection.hideSelectAll || false,
         type: rowSelection.type,
@@ -71,86 +76,23 @@ export default function index({ tableHeader, defaultPageSize = 15, defaultCurren
     }) as any
 
 
-    const data: any[] = [
-        {
-            key: '1',
-            name: 'John Brown',
-            age: 32,
-            address: 'New York No. 1 Lake Park',
-        },
-        {
-            key: '2',
-            name: 'Jim Green',
-            age: 42,
-            address: 'London No. 1 Lake Park',
-        },
-        {
-            key: '3',
-            name: 'Joe Black',
-            age: 32,
-            address: 'Sydney No. 1 Lake Park',
-        },
-        {
-            key: '4',
-            name: 'Jim Red',
-            age: 32,
-            address: 'London No. 2 Lake Park',
-        },
-        {
-            key: '5',
-            name: 'Jim Red',
-            age: 32,
-            address: 'London No. 2 Lake Park',
-        },
-        {
-            key: '6',
-            name: 'Jim Red',
-            age: 32,
-            address: 'London No. 2 Lake Park',
-        },
-        {
-            key: '7',
-            name: 'Jim Red',
-            age: 32,
-            address: 'London No. 2 Lake Park',
-        },
-        {
-            key: '8',
-            name: 'Jim Red',
-            age: 32,
-            address: 'London No. 2 Lake Park',
-        },
-        {
-            key: '9',
-            name: 'Jim Red',
-            age: 32,
-            address: 'London No. 2 Lake Park',
-        },
-        {
-            key: '10',
-            name: 'Jim Red',
-            age: 32,
-            address: 'London No. 2 Lake Park',
-        },
-        {
-            key: '11',
-            name: 'Jim Red',
-            age: 32,
-            address: 'London No. 2 Lake Park',
-        },
-        {
-            key: '12',
-            name: 'Jim Red',
-            age: 32,
-            address: 'London No. 2 Lake Park',
-        },
-    ];
+    useEffect(() => {
+        fetchTableData()
+    }, [])
+
+    const fetchTableData = async () => {
+        if (url) {
+            const response = await tableRequest.fetchTableData(url, method, { pageSize: defaultPageSize, currentPage: defaultCurrent, ...queryParams })            
+            setTableData(response.data?.menuTableData)
+        }
+    }
+
     const handleChange = () => {
         console.log('Various parameters');
     };
 
     const changePage = (pageSize: number, currentPage: number) => {
-        
+
     }
 
     return (
@@ -158,7 +100,7 @@ export default function index({ tableHeader, defaultPageSize = 15, defaultCurren
             <Table
                 className={tableView.tableView}
                 columns={tableHeaderAgain}
-                dataSource={data}
+                dataSource={tableData}
                 rowSelection={rowSelectionAgain.type ? rowSelectionAgain : undefined}
                 tableLayout="fixed"
                 size="small"

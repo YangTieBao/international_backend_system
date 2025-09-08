@@ -98,30 +98,21 @@ export default function index() {
 
     const tableHeader: any = [
         {
-            title: 'Name111111111111111111111',
-            dataIndex: 'name',
-            key: 'name',
-            filters: [
-                { text: 'Joe', value: 'Joe' },
-                { text: 'Jim', value: 'Jim' },
-            ],
-            ellipsis: true,
-            // width:20
-        },
-        {
-            title: 'Age',
-            dataIndex: 'age',
-            key: 'age',
+            title: '菜单名称',
+            dataIndex: 'title',
+            key: 'title',
             ellipsis: true,
         },
         {
-            title: 'Address',
-            dataIndex: 'address',
-            key: 'address',
-            filters: [
-                { text: 'London', value: 'London' },
-                { text: 'New York', value: 'New York' },
-            ],
+            title: '菜单级别',
+            dataIndex: 'grade',
+            key: 'grade',
+            ellipsis: true,
+        },
+        {
+            title: '菜单路由',
+            dataIndex: 'path',
+            key: 'path',
             ellipsis: true,
         },
 
@@ -131,6 +122,7 @@ export default function index() {
             <FormWrapper initForms={initForms}></FormWrapper>
             <TableView
                 tableHeader={tableHeader}
+                url='/menus/menuTableData'
             ></TableView>
         </div>
     )

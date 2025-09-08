@@ -1,8 +1,8 @@
 import { pool } from "../config/database"
 
 export const MenuDao = () => {
-    const getMenus = async (user_id: number) => {
-        const sql = `
+  const getMenus = async (user_id: number) => {
+    const sql = `
         select 
           t1.*
         from 
@@ -16,11 +16,31 @@ export const MenuDao = () => {
         order by
           t1.sort asc
         `
-        const [menus] = await pool.query(sql, [user_id])
+    const [menus] = await pool.query(sql, [user_id])
 
-        return menus
-    }
+    return menus
+  }
+
+  const menuTableData = async (requestBody: any) => {
+    const { pageSize, currentPage } = requestBody
+    const offset = (currentPage - 1) * pageSize
+    const sql = `
+        select 
+          t1.*
+        from 
+          menus as t1
+        order by
+          t1.sort asc
+        limit 
+          ? 
+        offset 
+          ?
+        `
+
+    const [menuTableData] = await pool.query(sql, [pageSize, offset])
+    return menuTableData
+  }
 
 
-    return { getMenus }
+  return { getMenus, menuTableData }
 }
