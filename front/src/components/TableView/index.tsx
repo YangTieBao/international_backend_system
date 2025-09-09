@@ -23,10 +23,20 @@ interface TableFrops {
     tableHeader: TableHeader[];
     url?: string;
     method?: string;
-    selectionType?: string | any;
+    rowSelection?: any; // hideSelectAll => 是否显示全选，type =>有radio与checkbox
+    queryParams?: any[];
+    defaultPageSize?: number;
+    defaultCurrent?: number;
+    pageSizeOptions?: number[];
 }
 
-export default function index({ tableHeader, selectionType }: TableFrops) {
+export default function index({ tableHeader, defaultPageSize = 15, defaultCurrent = 1, pageSizeOptions = [15, 30, 60, 120, 1500], rowSelection = {}, queryParams = [] }: TableFrops) {
+    const rowSelectionAgain = {
+        hideSelectAll: rowSelection.hideSelectAll || false,
+        type: rowSelection.type,
+        columnWidth: 32
+    }
+
     const tableHeaderPushIndex = [
         {
             title: '序列',
@@ -39,7 +49,8 @@ export default function index({ tableHeader, selectionType }: TableFrops) {
             return {
                 ...item,
                 width: 40,
-                fixed: true
+                fixed: true,
+                align: 'center'
             }
         }
         return {
@@ -138,13 +149,17 @@ export default function index({ tableHeader, selectionType }: TableFrops) {
         console.log('Various parameters');
     };
 
+    const changePage = (pageSize: number, currentPage: number) => {
+        
+    }
+
     return (
         <div className={tableView.table}>
             <Table
                 className={tableView.tableView}
                 columns={tableHeaderAgain}
                 dataSource={data}
-                rowSelection={{ type: selectionType, columnWidth: 32 }}
+                rowSelection={rowSelectionAgain.type ? rowSelectionAgain : undefined}
                 tableLayout="fixed"
                 size="small"
                 bordered={false}
@@ -157,13 +172,14 @@ export default function index({ tableHeader, selectionType }: TableFrops) {
             />
             <Pagination
                 className={tableView.pagination}
-                pageSizeOptions={[15, 30, 60, 120, 1500]}
+                pageSizeOptions={pageSizeOptions}
                 total={850}
                 showSizeChanger
                 showQuickJumper
                 showTotal={(total) => `共 ${total} 条数据`}
-                defaultPageSize={15}
-                defaultCurrent={1}
+                defaultPageSize={defaultPageSize}
+                defaultCurrent={defaultCurrent}
+                onChange={changePage}
             />
         </div>
     );
