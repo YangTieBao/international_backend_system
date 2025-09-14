@@ -16,6 +16,7 @@
     "antd": "^5.26.7",
     "axios": "^1.10.0",
     "crypto-js": "^4.2.0",
+    "dayjs": "^1.11.18",
     "i18next": "^25.3.2",
     "i18next-browser-languagedetector": "^8.2.0",
     "i18next-http-backend": "^3.0.2",
