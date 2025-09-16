@@ -23,7 +23,8 @@ interface OptionItem {
 }
 
 interface FormItem {
-    key: number | string;
+    key?: number | string;
+    prop: string;
     label: string;
     type?: string;
     options?: OptionItem[];
@@ -34,9 +35,10 @@ interface FormItem {
 
 interface FromProps {
     initForms: FormItem[];
+    getFormSearch?: (values: any) => void;
 }
 
-export default function index({ initForms }: FromProps) {
+export default function index({ initForms, getFormSearch }: FromProps) {
     const initFormsAgain = initForms.map(item => {
         return {
             ...item,
@@ -88,10 +90,10 @@ export default function index({ initForms }: FromProps) {
             result = <DatePicker placeholder={placeholder} picker="year" allowClear={allowClear} />
         } else if (type === 'dateRange') {
             // 日期范围
-            result = <RangePicker placeholder={placeholder} allowClear={allowClear} />
+            result = <RangePicker placeholder={placeholder || ['开始日期', '结束日期']} allowClear={allowClear} />
         } else if (type === 'datetimeRange') {
             // 时间范围
-            result = <RangePicker placeholder={placeholder} showTime allowClear={allowClear} />
+            result = <RangePicker placeholder={placeholder || ['开始时间', '结束时间']} showTime allowClear={allowClear} />
         } else if (type === 'weekRange') {
             // 周期范围
             result = <RangePicker placeholder={placeholder} picker="week" allowClear={allowClear} />
@@ -111,10 +113,6 @@ export default function index({ initForms }: FromProps) {
         return result
     }
 
-    const onFinish = (values: any) => {
-        console.log('Received values of form: ', values);
-    };
-
     return (
         <Form
             className={search.form}
@@ -125,13 +123,13 @@ export default function index({ initForms }: FromProps) {
             layout="inline"
             labelAlign="right"
             labelWrap={false}
-            onFinish={onFinish}>
+            onFinish={getFormSearch}>
             <Flex justify="space-between" align="flex-start" className={search.flex}>
                 <Row gutter={12} className={`${search.row} ${expand ? search.autoHeight : ''}`}>
                     {initFormsAgain.map(item => {
                         return (
-                            <Col key={item.key} xs={24} md={12} lg={8} xl={8} xxl={6}>
-                                <Form.Item label={item.label} name={item.key}>
+                            <Col key={item.key || item.prop} xs={24} md={12} lg={8} xl={8} xxl={6}>
+                                <Form.Item label={item.label} name={item.prop}>
                                     {formItemType(item)}
                                 </Form.Item>
                             </Col>
@@ -150,7 +148,7 @@ export default function index({ initForms }: FromProps) {
                     >
                         重置
                     </Button>
-                    {initFormsAgain?.length > 6 ? <div className={search.expand} onClick={changeExpand}>
+                    {initFormsAgain?.length > 3 ? <div className={search.expand} onClick={changeExpand}>
                         {!expand ?
                             <div>
                                 <span>展开</span>
