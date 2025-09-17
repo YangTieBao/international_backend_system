@@ -1,99 +1,87 @@
+import ButtonList from '@/components/ButtonList';
 import FormWrapper from '@/components/FormWrapper';
 import TableView from '@/components/TableView';
+import { format } from '@/utils';
+import { Tooltip } from 'antd';
+import { useState } from 'react';
 import './index.scss';
-
 export default function index() {
+    const { formatTime } = format()
+    const [queryParams, setQueryParams] = useState([]) as any
+    const operationButtons = [
+        {
+            key: 1,
+            prop: '查看',
+            type: 'link',
+            onClick: () => {
+                console.log('查看操作')
+            }
+        },
+        {
+            key: 2,
+            prop: '编辑',
+            type: 'link',
+            onClick: () => {
+                console.log('编辑操作')
+            }
+        },
+        {
+            key: 3,
+            prop: '删除',
+            type: 'link',
+            onClick: () => {
+                console.log('删除操作')
+            }
+        }
+    ] as any
+    const buttonList = [
+        {
+            key: 1,
+            prop: '新增',
+            type: 'primary',
+            onClick: () => {
+                console.log('新增操作')
+            }
+        },
+    ] as any
+
     const initForms = [
         {
             key: 1,
-            label: '111111',
+            prop: 'menuName',
+            label: '菜单名称',
             type: 'input',
             placeholder: '请输入'
         },
         {
             key: 2,
-            label: '2222',
-            type: 'search'
-        },
-        {
-            key: 3,
-            label: '3333',
+            prop: 'menuGrade',
+            label: '菜单级别',
             type: 'select',
             options: [{
-                label: '11111',
+                label: '1级',
+                value: 0
+            }, {
+                label: '2级',
                 value: 1
+            }, {
+                label: '3级',
+                value: 2
             }]
         },
         {
+            key: 3,
+            prop: 'menuPath',
+            label: '菜单地址',
+            type: 'input',
+            placeholder: '请输入'
+        },
+        {
             key: 4,
-            label: '44444',
-            type: 'multipleSelect',
-            options: [
-                {
-                    label: '1',
-                    value: 1
-                },
-                {
-                    label: '2',
-                    value: 2
-                },
-                {
-                    label: '3',
-                    value: 3
-                },
-            ]
-        },
-        {
-            key: 5,
-            label: '55555',
-            type: 'date',
-        },
-        {
-            key: 6,
-            label: '66666',
-            type: 'datetime',
-        },
-        {
-            key: 7,
-            label: 'week',
-            type: 'week',
-        },
-        {
-            key: 8,
-            label: 'month',
-            type: 'month',
-        },
-        {
-            key: 9,
-            label: 'year',
-            type: 'year',
-        },
-        {
-            key: 10,
-            label: 'dateRange',
-            type: 'dateRange',
-        },
-        {
-            key: 11,
-            label: 'datetimeRange11111111231232',
-            type: 'datetimeRange',
-        },
-        {
-            key: 12,
-            label: 'weekRange',
-            type: 'weekRange',
-        },
-        {
-            key: 13,
-            label: 'monthRange',
-            type: 'monthRange',
-        },
-        {
-            key: 14,
-            label: 'yearRange',
-            type: 'yearRange',
-        },
-
+            prop: 'menuDateRange',
+            label: '创建时间',
+            type: 'dateRange'
+        }
     ]
 
     const tableHeader: any = [
@@ -101,27 +89,85 @@ export default function index() {
             title: '菜单名称',
             dataIndex: 'title',
             key: 'title',
-            ellipsis: true,
         },
         {
             title: '菜单级别',
             dataIndex: 'grade',
             key: 'grade',
-            ellipsis: true,
+            render: (value: any) => (
+                textSelect(value)
+            )
         },
         {
             title: '菜单路由',
             dataIndex: 'path',
             key: 'path',
-            ellipsis: true,
+            render: (value: any) => (
+                <Tooltip placement="topLeft" title={value}>
+                    {value}
+                </Tooltip>)
         },
-
+        {
+            title: '创建时间',
+            dataIndex: 'createdTime',
+            key: 'createdTime',
+            render: (value: any) => (
+                <Tooltip placement="topLeft" title={formatTime(value)}>
+                    {formatTime(value)}
+                </Tooltip>)
+        }, {
+            title: '创建人',
+            dataIndex: 'createdBy',
+            key: 'createdBy',
+        },
+        {
+            title: '更新时间',
+            dataIndex: 'updatedTime',
+            key: 'updatedTime',
+            render: (value: any) => (
+                <Tooltip placement="topLeft" title={formatTime(value)}>
+                    {formatTime(value)}
+                </Tooltip>)
+        }, {
+            title: '更新人',
+            dataIndex: 'updatedBy',
+            key: 'updatedBy',
+        },
+        {
+            title: '操作',
+            key: 'operation',
+            fixed: 'right',
+            width: 150,
+            ellipsis: false,
+            render: () => (
+                <ButtonList buttonList={operationButtons} />
+            ),
+        },
     ];
+
+    const textSelect = (value: any) => {
+        let text
+        if (value == 0) {
+            text = '1级'
+        } else if (value == 1) {
+            text = '2级'
+        } else if (value == 2) {
+            text = '3级'
+        }
+        return text
+    }
+
+    const getFormSearch = (values: any) => {
+        setQueryParams(values)
+    }
+
     return (
         <div className='list'>
-            <FormWrapper initForms={initForms}></FormWrapper>
+            <FormWrapper initForms={initForms} getFormSearch={getFormSearch}></FormWrapper>
+            <ButtonList buttonList={buttonList} height="32px" />
             <TableView
                 tableHeader={tableHeader}
+                queryParams={queryParams}
                 url='/menus/menuTableData'
             ></TableView>
         </div>
