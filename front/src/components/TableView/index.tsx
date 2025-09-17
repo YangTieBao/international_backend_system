@@ -12,6 +12,7 @@ interface TableHeader {
     defaultFilteredValue?: string[];
     filterResetToDefaultFilteredValue?: boolean;
     defaultSortOrder?: string; // 'ascend' | 'descend'
+    isTitleTooltip?: boolean;
     ellipsis?: boolean;
     fixed?: boolean | string;
     key?: number | string;
@@ -32,9 +33,10 @@ interface TableFrops {
     pageSizeOptions?: number[];
 }
 
-export default function index({ tableHeader, defaultPageSize = 15, defaultCurrent = 1, pageSizeOptions = [15, 30, 60, 120, 1500], rowSelection = {}, url, method = 'post', queryParams = [] }: TableFrops) {
+export default function index({ tableHeader, defaultPageSize = 15, defaultCurrent = 1, pageSizeOptions = [5, 10, 15, 30, 60, 120, 1500], rowSelection = {}, url, method = 'post', queryParams = [] }: TableFrops) {
     const tableRequest = tableRequests()
     const [tableData, setTableData] = useState([])
+    const [total, setTotal] = useState(0)
 
     const rowSelectionAgain = {
         hideSelectAll: rowSelection.hideSelectAll || false,
@@ -60,30 +62,31 @@ export default function index({ tableHeader, defaultPageSize = 15, defaultCurren
         }
         return {
             ...item,
-            title: () => (<Tooltip
+            title: () => (item.isTitleTooltip ? <Tooltip
                 title={item.title}
                 placement="topLeft"
             >
                 {item.title}
-            </Tooltip>),
+            </Tooltip> : item.title),
             width: item.width || 100,
             ellipsis: item.ellipsis || true,
-            render: (value: any) => (
-                <Tooltip placement="topLeft" title={value}>
-                    {value}
-                </Tooltip>)
+            // render: (value: any) => (
+            //     <Tooltip placement="topLeft" title={value}>
+            //         {value}
+            //     </Tooltip>)
         }
     }) as any
 
 
     useEffect(() => {
         fetchTableData()
-    }, [])
+    }, [queryParams])
 
     const fetchTableData = async () => {
         if (url) {
-            const response = await tableRequest.fetchTableData(url, method, { pageSize: defaultPageSize, currentPage: defaultCurrent, ...queryParams })            
-            setTableData(response.data?.menuTableData)
+            const response = await tableRequest.fetchTableData(url, method, { pageSize: defaultPageSize, currentPage: defaultCurrent, ...queryParams })
+            setTableData(response.data?.tableData)
+            setTotal(response.data?.total)
         }
     }
 
@@ -91,8 +94,12 @@ export default function index({ tableHeader, defaultPageSize = 15, defaultCurren
         console.log('Various parameters');
     };
 
-    const changePage = (pageSize: number, currentPage: number) => {
-
+    const changePage = async (currentPage: number, pageSize: number) => {
+        if (url) {
+            const response = await tableRequest.fetchTableData(url, method, { pageSize, currentPage, ...queryParams })
+            setTableData(response.data?.tableData)
+            setTotal(response.data?.total)
+        }
     }
 
     return (
@@ -115,7 +122,7 @@ export default function index({ tableHeader, defaultPageSize = 15, defaultCurren
             <Pagination
                 className={tableView.pagination}
                 pageSizeOptions={pageSizeOptions}
-                total={850}
+                total={total}
                 showSizeChanger
                 showQuickJumper
                 showTotal={(total) => `共 ${total} 条数据`}
