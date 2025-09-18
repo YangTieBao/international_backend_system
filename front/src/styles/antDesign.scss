@@ -25,6 +25,17 @@
 .ant-btn {
     height: 22px;
     font-size: 10px;
+
+    &.ant-btn-primary,
+    &.ant-btn-default {
+        padding: 0 7px;
+        border-radius: 4px;
+    }
+
+    &.ant-btn-link,
+    &.ant-btn-text {
+        padding: 0;
+    }
 }
 
 // tooltip
