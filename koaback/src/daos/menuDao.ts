@@ -22,25 +22,59 @@ export const MenuDao = () => {
   }
 
   const menuTableData = async (requestBody: any) => {
-    const { pageSize, currentPage } = requestBody
+    const { pageSize, currentPage, menuName, menuGrade, menuPath } = requestBody
     const offset = (currentPage - 1) * pageSize
-    const sql = `
-        select 
-          t1.*
-        from 
-          menus as t1
-        order by
-          t1.sort asc
-        limit 
-          ? 
-        offset 
-          ?
-        `
 
-    const [menuTableData] = await pool.query(sql, [pageSize, offset])
+    let sql = `
+      select 
+        t1.*
+      from 
+        menus as t1
+      where 
+        1=1
+    `
+
+    const params = []
+
+    if (menuName) {
+      sql += ` and t1.title like ?`
+      params.push(`%${menuName}%`)
+    } else if (menuGrade || menuGrade == 0) {
+      sql += ` and t1.grade like ?`
+      params.push(`%${menuGrade}%`)
+    } else if (menuPath) {
+      sql += ` and t1.path like ?`
+      params.push(`%${menuPath}%`)
+    }
+
+    sql += `
+      order by 
+        t1.sort asc
+      limit 
+        ?
+      offset 
+        ?
+    `
+
+    params.push(pageSize, offset);
+
+    const [menuTableData] = await pool.query(sql, params);
+
     return menuTableData
+
   }
 
+  const totalCount = async () => {
+    const sql = `
+        select 
+          count(*) as total
+        from 
+          menus
+        `
+    const [total] = await pool.query(sql) as any
 
-  return { getMenus, menuTableData }
+    return total[0].total
+  }
+
+  return { getMenus, menuTableData, totalCount }
 }

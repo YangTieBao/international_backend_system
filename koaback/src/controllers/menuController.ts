@@ -29,6 +29,8 @@ export const menuController = () => {
     try {
       const requestBody = ctx.request.body as any
 
+      let total = await menuDao.totalCount()
+
       let menuTableData = await menuDao.menuTableData(requestBody) as any
 
       menuTableData = menuTableData.map((item: object, index: number) => {
@@ -39,7 +41,7 @@ export const menuController = () => {
       })
 
       ctx.body = {
-        data: { menuTableData }
+        data: { tableData: menuTableData, total }
       }
 
       await next()
