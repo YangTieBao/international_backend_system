@@ -4,12 +4,39 @@
     }
 }
 
+.ant-collapse {
+    border-radius: 4px;
+}
+
 // 输入框，下拉框，日期选择器的高度
 .ant-input-affix-wrapper,
 .ant-picker,
 .ant-select,
 .ant-input-group-wrapper {
     height: 24px;
+}
+
+.ant-input {
+    &.ant-input-sm {
+        font-size: 12px;
+        height: 24px;
+    }
+}
+
+.ant-input-number {
+    &.ant-input-number-sm {
+        .ant-input-number-input {
+            font-size: 12px;
+        }
+    }
+}
+
+.ant-select {
+    &.ant-select-sm {
+        .ant-select-selection-item {
+            font-size: 12px;
+        }
+    }
 }
 
 .ant-select-item {

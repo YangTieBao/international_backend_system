@@ -56,7 +56,8 @@
             background: #fff;
             padding: 10px;
 
-            :global(.ant-tabs-content),:global(.ant-tabs-tabpane) {
+            :global(.ant-tabs-content),
+            :global(.ant-tabs-tabpane) {
                 height: 100%;
             }
         }

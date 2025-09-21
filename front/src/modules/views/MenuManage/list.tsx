@@ -22,7 +22,7 @@ export default function index({ addTab }: ListProps) {
                 addTab({
                     key: 3,
                     label: '查看菜单',
-                    children: <Edit />,
+                    children: <Edit visible={true} />,
                     closable: true
                 })
             }

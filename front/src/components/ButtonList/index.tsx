@@ -30,11 +30,13 @@ interface ButtonItem extends AntdButtonProps {
 interface ButtonProps {
     buttonList?: ButtonItem[];
     height?: string;
+    align?: string;
+    vAlign?: string;
 }
 
-export default function index({ buttonList = [], height = 'auto' }: ButtonProps) {
+export default function index({ buttonList = [], height = 'auto', align = 'left', vAlign = 'center' }: ButtonProps) {
     return (
-        <div style={{ height: height }}>
+        <div style={{ height: height, display: 'flex', alignItems: vAlign, justifyContent: align }}>
             {
                 buttonList?.map(item => (
                     <Button key={item.key || item.prop} {...item} style={{ marginRight: '8px' }}>{item.prop}</Button>
