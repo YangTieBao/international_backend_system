@@ -16,16 +16,7 @@ export const commonsRequests = () => {
 
     };
 
-    const fetchTableData = (url: string, method: string = 'post', params: object) => {
-        return http({
-            url: url,
-            method: method,
-            data: params,
-            isEncryptResponse
-        });
-    }
-
-    return { fetchLanguage, fetchTableData }
+    return { fetchLanguage }
 
 }
 

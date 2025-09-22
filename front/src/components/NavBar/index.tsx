@@ -1,5 +1,5 @@
 import { Tabs } from 'antd';
-import { forwardRef, useImperativeHandle, useState } from 'react';
+import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 import navbar from './index.module.scss';
 
 interface InitialItem {
@@ -15,6 +15,7 @@ interface NavbarProps {
 
 export interface ChildMethods {
     addTab: (newTab: InitialItem) => void;
+    removeTab: (key: string | number) => void;
 }
 
 const index = forwardRef<ChildMethods, NavbarProps>(({ initialItems }, ref) => {
@@ -39,6 +40,11 @@ const index = forwardRef<ChildMethods, NavbarProps>(({ initialItems }, ref) => {
         setActiveKey(tabWithStringKey.key);
     };
 
+    useEffect(() => {
+        // 当 items 发生变化时会执行这里
+        console.log('更新后的 items:', items);
+    }, [items]); // 依赖数组中添加 items
+
     // 子组件内部方法：移除标签
     const removeTab = (targetKey: string | number) => {
         const stringKey = String(targetKey);
@@ -46,14 +52,13 @@ const index = forwardRef<ChildMethods, NavbarProps>(({ initialItems }, ref) => {
         let lastIndex = -1;
 
         items.forEach((item, i) => {
-            if (item.key === stringKey) lastIndex = i - 1;
+            if (item.key == stringKey) lastIndex = i - 1;
         });
 
-        const newPanes = items.filter(item => item.key !== stringKey);
-        if (newPanes.length && newActiveKey === stringKey) {
+        const newPanes = items.filter(item => item.key != stringKey);
+        if (newPanes.length && newActiveKey == stringKey) {
             newActiveKey = lastIndex >= 0 ? newPanes[lastIndex].key : newPanes[0].key;
         }
-
         setItems(newPanes);
         setActiveKey(newActiveKey);
     };
@@ -66,8 +71,9 @@ const index = forwardRef<ChildMethods, NavbarProps>(({ initialItems }, ref) => {
 
     // 通过useImperativeHandle暴露指定方法给父组件
     useImperativeHandle(ref, () => ({
-        addTab    // 暴露添加标签方法
-    }), []); // 依赖为空数组，方法引用稳定
+        addTab,    // 暴露添加标签方法
+        removeTab  // 暴露删除标签方法
+    }), [addTab, removeTab]); // 依赖为空数组，方法引用稳定
 
     return (
         <div className={navbar.navbar}>

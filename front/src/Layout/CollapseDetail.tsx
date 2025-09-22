@@ -11,11 +11,12 @@ interface CollapseItem {
 interface CollapseItems {
     collapseItems: CollapseItem[];
     buttonList?: any;
+    defaultActiveKey?: any;
 }
-export default function index({ collapseItems, buttonList }: CollapseItems) {
+export default function index({ collapseItems, buttonList, defaultActiveKey = ['1'] }: CollapseItems) {
     return (
         <div className='collapseDetail'>
-            <Collapse items={collapseItems} defaultActiveKey={['1']} size="small" />
+            <Collapse items={collapseItems} defaultActiveKey={defaultActiveKey} size="small" />
             <div className='buttonList'>
                 <ButtonList buttonList={buttonList} height='40px' align='right'></ButtonList>
             </div>
