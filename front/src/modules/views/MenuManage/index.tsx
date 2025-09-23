@@ -10,11 +10,15 @@ export default function index() {
         navbarRef.current?.addTab(newTab);
     };
 
+    const handleRemoveTab = (tabKey: string) => {
+        navbarRef.current?.removeTab(tabKey);
+    }
+
     const initialItems = [
         {
             key: 1,
             label: '菜单管理列表',
-            children: <List addTab={handleAddTab} />,
+            children: <List addTab={handleAddTab} removeTab={handleRemoveTab} />,
             closable: false
         },
     ]
