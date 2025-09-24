@@ -50,5 +50,27 @@ export const menuController = () => {
     }
   }
 
-  return { getMenus, menuTableData }
+  // 保存菜单数据
+  const save = async (ctx: Context, next: Next) => {
+    try {
+
+
+      await next()
+    } catch (err) {
+      routerError('menuController/save', err, ctx)
+    }
+  }
+
+  // 删除菜单数据
+  const del = async (ctx: Context, next: Next) => {
+    try {
+
+
+      await next()
+    } catch (err) {
+      routerError('menuController/del', err, ctx)
+    }
+  }
+
+  return { getMenus, menuTableData, save, del }
 }

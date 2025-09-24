@@ -9,8 +9,9 @@ import './index.scss';
 
 interface ListProps {
     addTab: (value: any) => void;
+    removeTab: (value: any) => void;
 }
-export default function index({ addTab }: ListProps) {
+export default function index({ addTab, removeTab }: ListProps) {
     const { formatTime } = format()
     const [queryParams, setQueryParams] = useState([]) as any
     const operationButtons = [
@@ -22,7 +23,7 @@ export default function index({ addTab }: ListProps) {
                 addTab({
                     key: 3,
                     label: '查看菜单',
-                    children: <Edit visible={true} />,
+                    children: <Edit visible={true} removeTab={() => removeTab(3)} />,
                     closable: true
                 })
             }
@@ -35,7 +36,7 @@ export default function index({ addTab }: ListProps) {
                 addTab({
                     key: 4,
                     label: '编辑菜单',
-                    children: <Edit />,
+                    children: <Edit removeTab={() => removeTab(4)} />,
                     closable: true
                 })
             }
@@ -58,7 +59,7 @@ export default function index({ addTab }: ListProps) {
                 addTab({
                     key: 2,
                     label: '新增菜单',
-                    children: <Edit />,
+                    children: <Edit removeTab={() => removeTab(2)} />,
                     closable: true
                 })
             }
