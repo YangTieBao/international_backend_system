@@ -81,7 +81,11 @@ export const MenuDao = () => {
 
   // 保存菜单（新增或编辑）
   const save = async (requestBody: any) => {
-    const { id } = requestBody
+    const { id, name, path,
+      parentId,
+      sort,
+      icon,
+      component, } = requestBody
 
     if (id) {
       const sql = `
@@ -110,8 +114,7 @@ export const MenuDao = () => {
 
       return {
         success: true,
-        message: '菜单更新成功',
-        affectedRows: result.affectedRows
+        message: '菜单更新成功'
       };
     }
     // 新增操作 - 不存在id时
@@ -134,8 +137,7 @@ export const MenuDao = () => {
 
       return {
         success: true,
-        message: '菜单创建成功',
-        insertId: result.insertId  // 返回新创建记录的ID
+        message: '菜单创建成功'
       };
     }
   }

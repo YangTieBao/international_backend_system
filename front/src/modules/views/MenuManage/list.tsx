@@ -19,11 +19,11 @@ export default function index({ addTab, removeTab }: ListProps) {
             key: 1,
             prop: '查看',
             type: 'link',
-            onClick: () => {
+            onTableClick: (row: any, index: number) => {
                 addTab({
                     key: 3,
                     label: '查看菜单',
-                    children: <Edit visible={true} removeTab={() => removeTab(3)} />,
+                    children: <Edit initFormItem={row} visible={true} removeTab={() => removeTab(3)} />,
                     closable: true
                 })
             }
@@ -32,11 +32,11 @@ export default function index({ addTab, removeTab }: ListProps) {
             key: 2,
             prop: '编辑',
             type: 'link',
-            onClick: () => {
+            onTableClick: (row: any, index: number) => {
                 addTab({
                     key: 4,
                     label: '编辑菜单',
-                    children: <Edit removeTab={() => removeTab(4)} />,
+                    children: <Edit initFormItem={row} removeTab={() => removeTab(4)} />,
                     closable: true
                 })
             }
@@ -160,8 +160,8 @@ export default function index({ addTab, removeTab }: ListProps) {
             fixed: 'right',
             width: 150,
             ellipsis: false,
-            render: () => (
-                <ButtonList buttonList={operationButtons} />
+            render: (_: any, row: any, index: number) => (
+                <ButtonList buttonList={operationButtons} currentRow={row} currentRowIndex={index} />
             ),
         },
     ];
@@ -185,7 +185,7 @@ export default function index({ addTab, removeTab }: ListProps) {
     return (
         <div className='list'>
             <FormWrapper initForms={initForms} getFormSearch={getFormSearch}></FormWrapper>
-            <ButtonList buttonList={buttonList} height="32px" />
+            <ButtonList buttonList={buttonList} height='38px' />
             <TableView
                 tableHeader={tableHeader}
                 queryParams={queryParams}

@@ -25,6 +25,7 @@ import type { ButtonProps as AntdButtonProps } from 'antd';
 interface ButtonItem extends AntdButtonProps {
     prop?: any;
     key?: string | number;
+    onTableClick?: (row?: any, index?: number | string) => void;
 }
 
 interface ButtonProps {
@@ -32,14 +33,29 @@ interface ButtonProps {
     height?: string;
     align?: string;
     vAlign?: string;
+    currentRow?: any;
+    currentRowIndex?: number | string;
 }
 
-export default function index({ buttonList = [], height = 'auto', align = 'left', vAlign = 'center' }: ButtonProps) {
+export default function index({ buttonList = [], currentRow, currentRowIndex, height = 'auto', align = 'left', vAlign = 'center' }: ButtonProps) {
+    const isTableClick = (item: any) => {
+        if (item.onTableClick) {
+            if (currentRow) {
+                (currentRowIndex || currentRowIndex == 0) ? item.onTableClick(currentRow, currentRowIndex) : item.onTableClick(currentRow)
+            } else {
+                item.onTableClick()
+            }
+        }
+
+        if (item.onClick) {
+            item.onClick()
+        }
+    }
     return (
         <div style={{ height: height, display: 'flex', alignItems: vAlign, justifyContent: align }}>
             {
                 buttonList?.map(item => (
-                    <Button key={item.key || item.prop} {...item} style={{ marginRight: '8px' }}>{item.prop}</Button>
+                    <Button key={item.key || item.prop} {...item} onClick={() => isTableClick(item)} style={{ marginRight: '8px' }}>{item.prop}</Button>
                 ))
             }
         </div>

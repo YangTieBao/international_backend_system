@@ -1,6 +1,6 @@
 import CollapseDetail from '@/Layout/CollapseDetail'
 import { Col, Form, Input, InputNumber, Row, Select } from 'antd'
-export default function index({ visible = false, removeTab }: any) {
+export default function index({ initFormItem, visible = false, removeTab }: any) {
     const form = (initForms: any, isEdit: boolean) => {
 
         const colLayout = {
@@ -42,14 +42,16 @@ export default function index({ visible = false, removeTab }: any) {
                     <Col {...colLayout}>
                         <Form.Item label="菜单级别" name='grade'>
                             <Select>
-                                <Select.Option value="demo">Demo</Select.Option>
+                                <Select.Option value={0} >一级</Select.Option>
+                                <Select.Option value={1}>二级</Select.Option>
+                                <Select.Option value={2}>三级</Select.Option>
                             </Select>
                         </Form.Item>
                     </Col>
                     <Col {...colLayout}>
                         <Form.Item label="父菜单" name='parent'>
                             <Select>
-                                <Select.Option value="demo">Demo</Select.Option>
+
                             </Select>
                         </Form.Item>
                     </Col>
@@ -77,7 +79,7 @@ export default function index({ visible = false, removeTab }: any) {
         {
             key: '1',
             label: '菜单详情',
-            children: form(1, visible),
+            children: form(initFormItem, visible),
         }
     ] as any
 
