@@ -1,11 +1,11 @@
 import { Context, Next } from 'koa';
 import { UserDao } from '../daos/userDao';
-import { errors, generateJWTSecret } from '../utils';
+import { errors, getJWTSecret } from '../utils';
 
 const { routerError } = errors()
 
 const jwt = require('jsonwebtoken');
-const jwt_secret = generateJWTSecret();
+const jwt_secret = getJWTSecret();
 const cookie_jwt_validity_period = 2 * 60 * 60 * 1000;
 
 export const userController = () => {

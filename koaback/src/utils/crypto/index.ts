@@ -17,9 +17,15 @@ const { publicKey, privateKey } = crypto.generateKeyPairSync('rsa', {
 
 
 //生成jwt密钥
-const jwt_random = crypto.randomBytes(32).toString('hex');
-export const generateJWTSecret = () => {
-    return `jwt_${jwt_random}`;
+// const jwt_random = crypto.randomBytes(32).toString('hex');
+// export const generateJWTSecret = () => {
+//     return `jwt_${jwt_random}`;
+// };
+// 生成密钥并存储在变量中（只生成一次）
+const jwtSecret = `jwt_${crypto.randomBytes(32).toString('hex')}`;
+// 导出获取密钥的方法
+export const getJWTSecret = () => {
+    return jwtSecret;
 };
 
 //生成cookie密钥

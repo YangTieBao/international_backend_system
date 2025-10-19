@@ -1,8 +1,8 @@
 import { Context, Next } from 'koa';
-import { generateJWTSecret } from '../utils';
+import { getJWTSecret } from '../utils';
 
 const jwt = require('jsonwebtoken');
-const jwt_secret = generateJWTSecret();
+const jwt_secret = getJWTSecret();
 
 // 白名单
 const WHITE_LIST = [

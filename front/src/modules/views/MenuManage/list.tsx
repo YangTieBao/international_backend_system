@@ -1,7 +1,8 @@
 import ButtonList from '@/components/ButtonList';
 import FormWrapper from '@/components/FormWrapper';
 import TableView from '@/components/TableView';
-import { format } from '@/utils';
+import { format, messageFunctions } from '@/utils';
+import { menuManageRequests } from '@mod/api/menuManage';
 import { Tooltip } from 'antd';
 import { useState } from 'react';
 import Edit from './edit';
@@ -12,6 +13,8 @@ interface ListProps {
     removeTab: (value: any) => void;
 }
 export default function index({ addTab, removeTab }: ListProps) {
+    const { del } = menuManageRequests()
+    const { showSuccess } = messageFunctions()
     const { formatTime } = format()
     const [queryParams, setQueryParams] = useState([]) as any
     const operationButtons = [
@@ -45,8 +48,11 @@ export default function index({ addTab, removeTab }: ListProps) {
             key: 3,
             prop: '删除',
             type: 'link',
-            onClick: () => {
-                console.log('删除操作')
+            onTableClick: async (row: any, index: number) => {
+                const res = await del(row.id)
+                if (res.code === 200) {
+                    showSuccess()
+                }
             }
         }
     ] as any
@@ -118,6 +124,11 @@ export default function index({ addTab, removeTab }: ListProps) {
             render: (value: any) => (
                 textSelect(value)
             )
+        },
+        {
+            title: '父菜单',
+            dataIndex: 'parent_name',
+            key: 'parent_name'
         },
         {
             title: '菜单路由',

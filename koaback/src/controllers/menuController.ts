@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import { Context, Next } from 'koa';
 import { MenuDao } from '../daos/menuDao';
 import { errors } from '../utils';
@@ -50,10 +51,34 @@ export const menuController = () => {
     }
   }
 
+  // 获取父菜单
+  const getParentMenus = async (ctx: Context, next: Next) => {
+    try {
+      const { grade } = ctx.request.body as any
+
+      const parentData = await menuDao.getParentMenus(grade)
+
+      ctx.body = {
+        data: { parentData }
+      }
+
+      await next()
+    } catch (err) {
+      routerError('menuController/getParentMenu', err, ctx)
+    }
+  }
+
   // 保存菜单数据
   const save = async (ctx: Context, next: Next) => {
     try {
+      const { formData } = ctx.request.body as any
+      const currentTime = dayjs().format('YYYY-MM-DD HH:mm:ss')
 
+      await menuDao.save({ ...formData, currentTime, username: ctx.state.user.name, user_id: ctx.state.user.user_id })
+
+      ctx.body = {
+        data: { message: '操作成功' }
+      }
 
       await next()
     } catch (err) {
@@ -64,7 +89,13 @@ export const menuController = () => {
   // 删除菜单数据
   const del = async (ctx: Context, next: Next) => {
     try {
+      const { id } = ctx.request.body as any
 
+      await menuDao.del(id)
+
+      ctx.body = {
+        data: { message: '操作成功' }
+      }
 
       await next()
     } catch (err) {
@@ -72,5 +103,5 @@ export const menuController = () => {
     }
   }
 
-  return { getMenus, menuTableData, save, del }
+  return { getMenus, menuTableData, save, del, getParentMenus }
 }

@@ -79,67 +79,104 @@ export const MenuDao = () => {
     return total[0].total
   }
 
+  // 获取父菜单
+  const getParentMenus = async (grade: number) => {
+    const sql = `
+        select 
+          id,title 
+        from 
+          menus
+        where
+          1 = 1
+          ${grade ? `and grade = ${grade - 1}` : ``}
+      `;
+    const [result] = await pool.query(sql) as any
+    return result
+  }
+
   // 保存菜单（新增或编辑）
   const save = async (requestBody: any) => {
-    const { id, name, path,
-      parentId,
+    const { id, title, path,
+      parent_id,
+      parent_name,
+      grade,
       sort,
-      icon,
-      component, } = requestBody
+      username,
+      currentTime,
+      user_id
+    } = requestBody
+
+    let type
+    if (grade === 0) {
+      type = 0
+    } else {
+      type = 1
+    }
 
     if (id) {
       const sql = `
         UPDATE menus 
         SET 
-          name = ?, 
+          title = ?, 
           path = ?, 
           parent_id = ?, 
+          parent_name = ?,
+          grade = ?,
+          type = ?,
           sort = ?, 
-          icon = ?, 
-          component = ?,
-          updated_at = CURRENT_TIMESTAMP
+          updatedTime = ?,
+          updatedBy = ?
         WHERE 
           id = ?
       `;
       // 执行更新
-      const [result] = await pool.query(sql, [
-        name,
+      await pool.query(sql, [
+        title,
         path,
-        parentId || null,  // 处理可能的空值
+        parent_id || 0,  // 处理可能的空值
+        parent_name,
+        grade,
+        type,
         sort || 0,         // 提供默认排序值
-        icon,
-        component,
+        currentTime,
+        username,
         id
       ]);
-
-      return {
-        success: true,
-        message: '菜单更新成功'
-      };
     }
     // 新增操作 - 不存在id时
     else {
       const sql = `
         INSERT INTO menus 
-          (name, path, parent_id, sort, icon, component, created_at, updated_at)
+          (title, path, parent_id,parent_name,grade,type, sort, createdTime, createdBy, updatedTime, updatedBy)
         VALUES 
-          (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+          (?, ?, ?, ?, ?, ?, ?, ?, ?,?,?)
       `;
       // 执行插入
       const [result] = await pool.query(sql, [
-        name,
+        title,
         path,
-        parentId || null,
+        parent_id || 0,
+        parent_name,
+        grade,
+        type,
         sort || 0,
-        icon,
-        component
-      ]);
+        currentTime,
+        username,
+        currentTime,
+        username,
+      ]) as any;
 
-      return {
-        success: true,
-        message: '菜单创建成功'
-      };
+      if (user_id === 1) {
+        const sql2 = `
+          INSERT INTO role_menus 
+            (role_id,menu_id)
+          VALUES 
+            (?, ?)
+        `;
+        await pool.query(sql2, [user_id, result.insertId])
+      }
     }
+    return true
   }
 
   // 删除菜单
@@ -159,5 +196,5 @@ export const MenuDao = () => {
     }
   }
 
-  return { getMenus, menuTableData, totalCount, save, del }
+  return { getMenus, menuTableData, totalCount, save, del, getParentMenus }
 }

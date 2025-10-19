@@ -5,7 +5,7 @@ export const menuManageRequests = () => {
     // 保存
     const save = (formData: any) => {
         return http({
-            url: '/commons/save',
+            url: '/menus/save',
             method: 'post',
             data: { formData },
             isEncryptResponse
@@ -14,14 +14,24 @@ export const menuManageRequests = () => {
     };
 
     // 删除
-    const del = (id: string) => {
+    const del = (id: string | number) => {
         return http({
-            url: '/commons/delete',
+            url: '/menus/delete',
             method: 'post',
             data: { id },
             isEncryptResponse
         });
     }
 
-    return { save, del }
+    // 获取父菜单
+    const getParentMenus = (grade: number) => {
+        return http({
+            url: '/menus/getParentMenus',
+            method: 'post',
+            data: { grade },
+            isEncryptResponse
+        });
+    }
+
+    return { save, del, getParentMenus }
 }
