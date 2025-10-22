@@ -1,9 +1,12 @@
 import CollapseDetail from '@/Layout/CollapseDetail';
+import { refreshTable } from '@/store';
 import { messageFunctions } from '@/utils';
 import { menuManageRequests } from '@mod/api/menuManage';
 import { Col, Form, Input, InputNumber, Row, Select } from 'antd';
 import { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 export default function index({ initFormItem, visible = false, removeTab }: any) {
+    const dispatch = useDispatch()
     const { getParentMenus, save } = menuManageRequests()
     const { showSuccess, showError } = messageFunctions()
     const [form2] = Form.useForm()
@@ -96,7 +99,7 @@ export default function index({ initFormItem, visible = false, removeTab }: any)
                         </Form.Item>
                     </Col>
                     {
-                        gradeValue !== 0 ?
+                        (gradeValue !== 0 && gradeValue) ?
                             <Col {...colLayout}>
                                 <Form.Item label="父菜单" name='parent_name'>
                                     <Select options={parentMenus} allowClear></Select>
@@ -134,6 +137,7 @@ export default function index({ initFormItem, visible = false, removeTab }: any)
         if (res.code) {
             showSuccess()
             removeTab()
+            dispatch(refreshTable())
         } else {
             showError()
         }

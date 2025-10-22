@@ -87,7 +87,7 @@ export const MenuDao = () => {
         from 
           menus
         where
-          1 = 1
+          isNeddChild = 1
           ${grade ? `and grade = ${grade - 1}` : ``}
       `;
     const [result] = await pool.query(sql) as any

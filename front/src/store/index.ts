@@ -12,7 +12,7 @@ export const store = configureStore({
 });
 
 export const { loginSuccess } = userSlice.actions;
-export const { changeCollapsed } = commonSlice.actions;
+export const { changeCollapsed, refreshTable } = commonSlice.actions;
 export const { getMenusState, pushTopMenus, filterTopMenus, activeRoute } = menuSlice.actions;
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;

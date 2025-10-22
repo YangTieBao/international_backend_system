@@ -1,6 +1,8 @@
 import { tableRequests } from '@/api/index';
+import type { RootState } from '@/store';
 import { Pagination, Table, Tooltip } from 'antd';
 import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import tableView from './index.module.scss';
 
 interface TableHeader {
@@ -37,6 +39,7 @@ export default function index({ tableHeader, defaultPageSize = 15, defaultCurren
     const tableRequest = tableRequests()
     const [tableData, setTableData] = useState([])
     const [total, setTotal] = useState(0)
+    const tableRefreshCount = useSelector((state: RootState) => state.common.tableRefreshCount)
 
     const rowSelectionAgain = {
         hideSelectAll: rowSelection.hideSelectAll || false,
@@ -80,7 +83,7 @@ export default function index({ tableHeader, defaultPageSize = 15, defaultCurren
 
     useEffect(() => {
         fetchTableData()
-    }, [queryParams])
+    }, [queryParams, tableRefreshCount])
 
     const fetchTableData = async () => {
         if (url) {
@@ -91,7 +94,7 @@ export default function index({ tableHeader, defaultPageSize = 15, defaultCurren
     }
 
     const handleChange = () => {
-        console.log('Various parameters');
+
     };
 
     const changePage = async (currentPage: number, pageSize: number) => {

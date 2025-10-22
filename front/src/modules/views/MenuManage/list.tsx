@@ -1,10 +1,12 @@
 import ButtonList from '@/components/ButtonList';
 import FormWrapper from '@/components/FormWrapper';
 import TableView from '@/components/TableView';
+import { refreshTable } from '@/store';
 import { format, messageFunctions } from '@/utils';
 import { menuManageRequests } from '@mod/api/menuManage';
 import { Tooltip } from 'antd';
 import { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import Edit from './edit';
 import './index.scss';
 
@@ -13,6 +15,7 @@ interface ListProps {
     removeTab: (value: any) => void;
 }
 export default function index({ addTab, removeTab }: ListProps) {
+    const dispatch = useDispatch()
     const { del } = menuManageRequests()
     const { showSuccess } = messageFunctions()
     const { formatTime } = format()
@@ -52,6 +55,7 @@ export default function index({ addTab, removeTab }: ListProps) {
                 const res = await del(row.id)
                 if (res.code === 200) {
                     showSuccess()
+                    dispatch(refreshTable())
                 }
             }
         }
