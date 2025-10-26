@@ -1,0 +1,30 @@
+#ai {
+    .drawer {
+        :global(.ant-drawer-header) {
+            height: 6%;
+            min-height: 40px;
+            border-color: #dcdcdc;
+
+            :global(.ant-drawer-close) {
+                font-size: 10px;
+                background-color: transparent;
+
+                &:hover {
+                    color: #0F5FFF;
+                }
+            }
+
+            :global(.ant-drawer-title) {
+                text-align: center;
+            }
+
+            :global(.ant-drawer-extra) {
+                font-size: 12px;
+
+                &:hover {
+                    color: #0F5FFF;
+                }
+            }
+        }
+    }
+}
