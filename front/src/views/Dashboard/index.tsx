@@ -1,10 +1,11 @@
+import AIDeepseek from '@/AI-deepseek';
 import { menusRequests } from '@/api/menus';
 import SideBar from '@/components/SideBar';
 import TopBar from '@/components/TopBar';
 import type { RootState } from '@/store';
 import { changeCollapsed, getMenusState } from '@/store';
 import { Watermark } from 'antd';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Outlet } from 'react-router-dom';
 import dashbord from './index.module.scss';
@@ -16,6 +17,11 @@ export default function index() {
     const collapsed = useSelector((state: RootState) => state.common.collapsed)
     const dashboardRef = useRef<HTMLDivElement>(null);
     const resizeObserverRef = useRef<ResizeObserver | null>(null);
+    const [isOpenAi, setIsOpenAi] = useState(false)
+
+    const clickDeepSeek = () => {
+        setIsOpenAi(!isOpenAi)
+    }
     const toSmallClass = () => {
         let className = []
         if (collapsed) {
@@ -79,6 +85,12 @@ export default function index() {
 
     return (
         <div id={dashbord.dashbord} className={toSmallClass()} ref={dashboardRef}>
+            <div>
+                {
+                    isOpenAi ? null : <div className='deepseek' onClick={clickDeepSeek}></div>
+                }
+                <AIDeepseek isOpenAi={isOpenAi} isOpenAiFn={clickDeepSeek}></AIDeepseek>
+            </div>
             <Watermark
                 width={120}
                 content={watermarkContent}
