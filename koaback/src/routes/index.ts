@@ -2,8 +2,12 @@ import Router from 'koa-router';
 import commonsRouters from './commonsRoutes';
 import userRoutes from './userRoutes';
 import menuRoutes from './menuRoutes'
+import deepseekRoutes from './ai-deepseekRoutes'
 
 const router = new Router();
+
+// 挂载DeepSeek路由
+router.use('/base-api/ai-deepseek', deepseekRoutes.routes(), deepseekRoutes.allowedMethods());
 
 // 挂载普通路由
 router.use('/base-api/commons', commonsRouters.routes(), commonsRouters.allowedMethods());

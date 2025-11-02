@@ -1,3 +1,4 @@
+import { deepseekRequests } from '@/api/ai-deepseek';
 import {
     FullscreenExitOutlined,
     FullscreenOutlined,
@@ -5,6 +6,7 @@ import {
 } from '@ant-design/icons';
 import { Avatar, Drawer, Input, message } from 'antd';
 import { useEffect, useRef, useState } from 'react';
+import { useSelector } from 'react-redux';
 import AI from './index.module.scss';
 
 interface aiProps {
@@ -15,7 +17,8 @@ interface aiProps {
 interface MessageItem {
     id: number;
     content: string;
-    role: 'user' | 'ai';
+    username: string;
+    role: 'user' | 'assistant';
     timestamp: Date;
 }
 
@@ -28,6 +31,8 @@ export default function index({ isOpenAi, isOpenAiFn }: aiProps) {
     const [messages, setMessages] = useState<MessageItem[]>([]);
     const messageListRef = useRef<HTMLDivElement>(null);
     const [isLoading, setIsLoading] = useState(false);
+    const userInfo = useSelector((state: any) => state.user.userInfo);
+    const { aiDeepseekChat } = deepseekRequests();
 
     // 切换全屏状态
     const changeScreen = () => {
@@ -54,7 +59,7 @@ export default function index({ isOpenAi, isOpenAiFn }: aiProps) {
     }, [messages]);
 
     // 发送消息
-    const sendMessage = () => {
+    const sendMessage = async () => {
         if (!inputValue.trim()) {
             message.warning('请输入消息内容');
             return;
@@ -62,8 +67,9 @@ export default function index({ isOpenAi, isOpenAiFn }: aiProps) {
 
         // 添加用户消息
         const newUserMessage: MessageItem = {
-            id: Date.now(),
+            id: userInfo.user_id || Date.now(),
             content: inputValue,
+            username: userInfo.name || '匿名用户',
             role: 'user',
             timestamp: new Date()
         };
@@ -72,17 +78,24 @@ export default function index({ isOpenAi, isOpenAiFn }: aiProps) {
         setInputValue('');
         setIsLoading(true);
 
-        // 模拟AI回复（实际项目中应该调用API）
-        setTimeout(() => {
+        const response = await aiDeepseekChat({
+            message: inputValue,
+            history: messages
+        });
+
+        if (response.code === 200) {
             const aiReply: MessageItem = {
-                id: Date.now() + 1,
-                content: `感谢您的提问！这是AI智能体的回复。您刚刚说："${inputValue}"`,
-                role: 'ai',
+                id: userInfo.user_id || Date.now() + 1,
+                content: response.data.reply || 'AI智能体回复失败',
+                username: 'AI智能体',
+                role: 'assistant',
                 timestamp: new Date()
             };
             setMessages(prev => [...prev, aiReply]);
             setIsLoading(false);
-        }, 1000);
+        } else {
+            setIsLoading(false);
+        }
     };
 
     // 处理回车键发送
@@ -126,13 +139,17 @@ export default function index({ isOpenAi, isOpenAiFn }: aiProps) {
                             <div
                                 key={message.id}
                                 className={AI.messageItem}
+                                style={{ flexDirection: message.role === 'user' ? 'row-reverse' : 'row' }}
                             >
                                 {/* 头像 */}
-                                <Avatar
-                                    className={AI.avatar}
-                                >
-                                    {message.role === 'user' ? '您' : 'AI'}
-                                </Avatar>
+                                <div className={AI.avatarContainer}>
+                                    <Avatar
+                                        className={AI.avatar}
+                                    >
+                                        {message.role === 'user' ? '您' : 'AI'}
+                                    </Avatar>
+                                    <span className={AI.username}>{message.username}</span>
+                                </div>
 
                                 {/* 消息内容 */}
                                 <div
@@ -156,6 +173,7 @@ export default function index({ isOpenAi, isOpenAiFn }: aiProps) {
                 <div className={AI.inputArea}>
                     <TextArea rows={3}
                         value={inputValue}
+                        disabled={isLoading}
                         onChange={(e) => setInputValue(e.target.value)}
                         onPressEnter={handleKeyPress}
                         placeholder="请输入您的问题..."
@@ -163,7 +181,6 @@ export default function index({ isOpenAi, isOpenAiFn }: aiProps) {
                     <SendOutlined
                         className={AI.sendIcon}
                         onClick={sendMessage}
-                        disabled={isLoading}
                     />
                 </div>
             </Drawer>
